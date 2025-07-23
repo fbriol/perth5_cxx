@@ -207,9 +207,21 @@ TEST_F(ConstituentTableTest, DataConsistency) {
 
 // Tests for make_tide_table function
 class TideTableTest : public ::testing::Test {
+ private:
+  static std::vector<Constituent> enabled_;
+
  protected:
-  TideTable table = make_tide_table();
+  TideTable table = make_tide_table(TideTableTest::enabled_);
+
+  auto is_enabled(Constituent constituent) const -> bool {
+    return std::find(enabled_.begin(), enabled_.end(), constituent) !=
+           enabled_.end();
+  }
 };
+
+std::vector<Constituent> TideTableTest::enabled_ = {
+    kQ1, kO1, kP1,  kS1,  kK1,  kN2, kM2,   kS2,
+    kK2, kM4, kMS4, k2N2, kMu2, kJ1, kSig1, kOO1};
 
 TEST_F(TideTableTest, TableSize) {
   EXPECT_EQ(table.size(), kNumConstituentItems);
@@ -237,11 +249,13 @@ TEST_F(TideTableTest, InitialValues) {
   // All tide table values should be initialized to (0, 0)
   for (std::size_t i = 0; i < kNumConstituentItems; ++i) {
     Constituent constituent = static_cast<Constituent>(i);
-    auto value = table[constituent];
+    auto [value, enabled] = table[constituent];
     EXPECT_EQ(value.real(), 0.0)
         << "Real part should be 0 for constituent " << i;
     EXPECT_EQ(value.imag(), 0.0)
         << "Imaginary part should be 0 for constituent " << i;
+    EXPECT_EQ(enabled, this->is_enabled(constituent))
+        << "Enabled status should match for constituent " << i;
   }
 }
 
@@ -258,19 +272,19 @@ TEST_F(TideTableTest, DataConsistency) {
 
 TEST_F(TideTableTest, Modifiability) {
   // Test that we can modify tide table values
-  table[Constituent::kM2] = {1.5, 2.3};
-  table[Constituent::kS2] = {-0.7, 1.2};
+  table[Constituent::kM2].first = {1.5, 2.3};
+  table[Constituent::kS2].first = {-0.7, 1.2};
 
-  EXPECT_EQ(table[Constituent::kM2].real(), 1.5);
-  EXPECT_EQ(table[Constituent::kM2].imag(), 2.3);
-  EXPECT_EQ(table[Constituent::kS2].real(), -0.7);
-  EXPECT_EQ(table[Constituent::kS2].imag(), 1.2);
+  EXPECT_EQ(table[Constituent::kM2].first.real(), 1.5);
+  EXPECT_EQ(table[Constituent::kM2].first.imag(), 2.3);
+  EXPECT_EQ(table[Constituent::kS2].first.real(), -0.7);
+  EXPECT_EQ(table[Constituent::kS2].first.imag(), 1.2);
 }
 
 // Integration test for both tables
 TEST(ConstituentIntegrationTest, TableConsistency) {
   auto constituent_table = make_constituent_table();
-  auto tide_table = make_tide_table();
+  auto tide_table = make_tide_table({});
 
   // Both tables should have the same size
   EXPECT_EQ(constituent_table.size(), tide_table.size());

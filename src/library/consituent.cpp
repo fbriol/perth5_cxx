@@ -79,12 +79,14 @@ auto make_constituent_table() -> ConstituentTable {
   return ConstituentTable(std::move(keys), std::move(items));
 }
 
-auto make_tide_table() -> TideTable {
+auto make_tide_table(const std::vector<Constituent> &constituents)
+    -> TideTable {
   TideTable::Item items;
   TideTable::Key keys;
   for (auto &&[key, value] : kConstituents) {
     auto index = constituent_to_index(key);
-    items[index] = {0, 0};
+    auto inferred = std::find(constituents.begin(), constituents.end(), key);
+    items[index] = {{0, 0}, inferred == constituents.end()};
     keys[index] = key;
   }
   return TideTable(std::move(keys), std::move(items));

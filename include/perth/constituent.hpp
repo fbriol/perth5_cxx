@@ -107,10 +107,10 @@ class ConstituentArray {
 
 using Data = std::pair<Vector6b, int8_t>;
 using ConstituentTable = ConstituentArray<Data>;
-using TideTable = ConstituentArray<Complex>;
+using TideTable = ConstituentArray<std::pair<Complex, bool>>;
 
 auto make_constituent_table() -> ConstituentTable;
 
-auto make_tide_table() -> TideTable;
+auto make_tide_table(const std::vector<Constituent>& constituents = {}) -> TideTable;
 
 }  // namespace perth

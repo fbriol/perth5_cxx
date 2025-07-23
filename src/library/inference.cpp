@@ -184,11 +184,11 @@ Inference::Inference(InterpolationType interpolation_type, InputType input_type,
   x9_ = mm.first;
 
   auto [fk, fh, fl] = love_pmm95b(x1_);
-  amp1_ = q1.first * (1 + fk - fh);
+  amp1_ = q1.second * (1 + fk - fh);
   std::tie(fk, fh, fl) = love_pmm95b(x2_);
-  amp2_ = o1.first * (1 + fk - fh);
+  amp2_ = o1.second * (1 + fk - fh);
   std::tie(fk, fh, fl) = love_pmm95b(x3_);
-  amp3_ = k1.first * (1 + fk - fh);
+  amp3_ = k1.second * (1 + fk - fh);
 
   amp4_ = n2.second;
   amp5_ = m2.second;
@@ -211,50 +211,63 @@ Inference::Inference(InterpolationType interpolation_type, InputType input_type,
 auto Inference::operator()(TideTable& hc) const -> void {
   // If needed, convert amp, phase to inphase, quad...
   if (input_type_ == InputType::kAmplitude) {
-    for (auto& item : hc.items()) {
-      auto tmp = radians(item.imag());
-      item = Complex(item.real() * std::cos(tmp), item.real() * std::sin(tmp));
+    for (auto& [tide, is_enabled] : hc.items()) {
+      auto tmp = radians(tide.imag());
+      tide = Complex(tide.real() * std::cos(tmp), tide.real() * std::sin(tmp));
     }
   }
-  auto y1 = hc[Constituent::kQ1] / amp1_;
-  auto y2 = hc[Constituent::kO1] / amp2_;
-  auto y3 = hc[Constituent::kK1] / amp3_;
-  auto y4 = hc[Constituent::kN2] / amp4_;
-  auto y5 = hc[Constituent::kM2] / amp5_;
-  auto y6 = hc[Constituent::kS2] / amp6_;
-  auto y7 = hc[Constituent::kNode] / amp7_;
-  auto y8 = hc[Constituent::kSa] / amp8_;
-  auto y9 = hc[Constituent::kMm] / amp9_;
+  auto y1 = hc[Constituent::kQ1].first / amp1_;
+  auto y2 = hc[Constituent::kO1].first / amp2_;
+  auto y3 = hc[Constituent::kK1].first / amp3_;
+  auto y4 = hc[Constituent::kN2].first / amp4_;
+  auto y5 = hc[Constituent::kM2].first / amp5_;
+  auto y6 = hc[Constituent::kS2].first / amp6_;
+  auto y7 = hc[Constituent::kNode].first / amp7_;
+  auto y8 = hc[Constituent::kSa].first / amp8_;
+  auto y9 = hc[Constituent::kMm].first / amp9_;
 
   if (calculation_type_ == CalculationType::kMinor) {
     for (const auto& constituent : diurnal_keys_) {
-      const auto& item = inferred_diurnal_.at(constituent);
-      auto x = item.first;
+      auto& updated_item = hc[constituent];
+      if (!updated_item.second) {
+        continue;  // Skip if the constituent is not computed by inference
+      }
+      const auto& inferred_item = inferred_diurnal_.at(constituent);
+
+      auto x = inferred_item.first;
       auto y = interpolation_1_(x1_, y1, x2_, y2, x3_, y3, x);
       auto [fk, fh, fl] = love_pmm95b(x);
       auto gam = 1 + fk - fh;
-      hc[constituent] = y * gam * item.second;
+      updated_item.first = y * gam * inferred_item.second;
     }
 
     for (const auto& constituent : semidiurnal_keys_) {
-      const auto& item = inferred_semidiurnal_.at(constituent);
-      auto y = interpolation_2_(x4_, y4, x5_, y5, x6_, y6, item.first);
-      hc[constituent] = y * item.second;
+      auto& updated_item = hc[constituent];
+      if (!updated_item.second) {
+        continue;  // Skip if the constituent is not computed by inference
+      }
+      const auto& inferred_item = inferred_semidiurnal_.at(constituent);
+      auto y = interpolation_2_(x4_, y4, x5_, y5, x6_, y6, inferred_item.first);
+      updated_item.first = y * inferred_item.second;
     }
   } else {
     for (const auto& constituent : long_period_keys_) {
-      const auto& item = inferred_long_period_.at(constituent);
-      auto y = linear_interpolation(x7_, y7, x8_, y8, x9_, y9, item.first);
-      hc[constituent] = y * item.second;
+      auto& updated_item = hc[constituent];
+      if (!updated_item.second) {
+        continue;  // Skip if the constituent is not computed by inference
+      }
+      const auto& inferred_item = inferred_long_period_.at(constituent);
+      auto y = linear_interpolation(x7_, y7, x8_, y8, x9_, y9, inferred_item.first);
+      updated_item.first = y * inferred_item.second;
     }
   }
 
   // If needed, convert back to amp, phase...
   if (input_type_ == InputType::kAmplitude) {
-    for (auto& item : hc.items()) {
-      auto amp = std::abs(item);
-      auto phase = std::arg(item);
-      item = Complex(amp, degrees(phase));
+    for (auto& [tide, _] : hc.items()) {
+      auto amp = std::abs(tide);
+      auto phase = std::arg(tide);
+      tide = Complex(amp, degrees(phase));
     }
   }
 }
