@@ -18,15 +18,9 @@ enum class InputType {
   kAmplitude  ///< constants are amplitudes, phase lags (deg).
 };
 
-enum class CalculationType {
-  kMinor,            ///< Minor constituents (diurnal and semidiurnal).
-  kMinorLongPeriod,  ///< Long-period constituents.
-};
-
 class Inference {
  public:
   Inference(InterpolationType interpolation_type, InputType input_type,
-            CalculationType calculation_type,
             const ConstituentTable& constituents);
 
   auto operator()(TideTable& hc) const -> void;
@@ -90,7 +84,6 @@ class Inference {
   double amp8_;           ///< Amplitude for the second component (long-period).
   double amp9_;           ///< Amplitude for the third component (long-period).
   InputType input_type_;  ///< Type of input data (harmonic or amplitude).
-  CalculationType calculation_type_;  ///< Type of calculation to perform.
   std::function<Complex(double, const Complex&, double, const Complex&, double,
                         const Complex&,
                         double)>

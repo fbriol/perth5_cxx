@@ -249,13 +249,13 @@ TEST_F(TideTableTest, InitialValues) {
   // All tide table values should be initialized to (0, 0)
   for (std::size_t i = 0; i < kNumConstituentItems; ++i) {
     Constituent constituent = static_cast<Constituent>(i);
-    auto [value, enabled] = table[constituent];
-    EXPECT_EQ(value.real(), 0.0)
+    const auto& component = table[constituent];
+    EXPECT_EQ(component.tide.real(), 0.0)
         << "Real part should be 0 for constituent " << i;
-    EXPECT_EQ(value.imag(), 0.0)
+    EXPECT_EQ(component.tide.imag(), 0.0)
         << "Imaginary part should be 0 for constituent " << i;
-    EXPECT_EQ(enabled, this->is_enabled(constituent))
-        << "Enabled status should match for constituent " << i;
+    EXPECT_EQ(component.is_inferred, !this->is_enabled(constituent))
+        << "Inferred status should match for constituent " << i;
   }
 }
 
@@ -272,13 +272,13 @@ TEST_F(TideTableTest, DataConsistency) {
 
 TEST_F(TideTableTest, Modifiability) {
   // Test that we can modify tide table values
-  table[Constituent::kM2].first = {1.5, 2.3};
-  table[Constituent::kS2].first = {-0.7, 1.2};
+  table[Constituent::kM2].tide = {1.5, 2.3};
+  table[Constituent::kS2].tide = {-0.7, 1.2};
 
-  EXPECT_EQ(table[Constituent::kM2].first.real(), 1.5);
-  EXPECT_EQ(table[Constituent::kM2].first.imag(), 2.3);
-  EXPECT_EQ(table[Constituent::kS2].first.real(), -0.7);
-  EXPECT_EQ(table[Constituent::kS2].first.imag(), 1.2);
+  EXPECT_EQ(table[Constituent::kM2].tide.real(), 1.5);
+  EXPECT_EQ(table[Constituent::kM2].tide.imag(), 2.3);
+  EXPECT_EQ(table[Constituent::kS2].tide.real(), -0.7);
+  EXPECT_EQ(table[Constituent::kS2].tide.imag(), 1.2);
 }
 
 // Integration test for both tables

@@ -152,9 +152,8 @@ auto populate_and_sort_inferred(
 }
 
 Inference::Inference(InterpolationType interpolation_type, InputType input_type,
-                     CalculationType calculation_type,
                      const ConstituentTable& constituents)
-    : input_type_(input_type), calculation_type_(calculation_type) {
+    : input_type_(input_type) {
   populate_and_sort_inferred(inferred_diurnal_, diurnal_keys_,
                              kInferredDiurnalConstituents_, constituents);
   populate_and_sort_inferred(inferred_semidiurnal_, semidiurnal_keys_,
@@ -211,60 +210,60 @@ Inference::Inference(InterpolationType interpolation_type, InputType input_type,
 auto Inference::operator()(TideTable& hc) const -> void {
   // If needed, convert amp, phase to inphase, quad...
   if (input_type_ == InputType::kAmplitude) {
-    for (auto& [tide, is_enabled] : hc.items()) {
+    for (auto& item : hc.items()) {
+      auto& tide = item.tide;
       auto tmp = radians(tide.imag());
       tide = Complex(tide.real() * std::cos(tmp), tide.real() * std::sin(tmp));
     }
   }
-  auto y1 = hc[Constituent::kQ1].first / amp1_;
-  auto y2 = hc[Constituent::kO1].first / amp2_;
-  auto y3 = hc[Constituent::kK1].first / amp3_;
-  auto y4 = hc[Constituent::kN2].first / amp4_;
-  auto y5 = hc[Constituent::kM2].first / amp5_;
-  auto y6 = hc[Constituent::kS2].first / amp6_;
-  auto y7 = hc[Constituent::kNode].first / amp7_;
-  auto y8 = hc[Constituent::kSa].first / amp8_;
-  auto y9 = hc[Constituent::kMm].first / amp9_;
+  auto y1 = hc[Constituent::kQ1].tide / amp1_;
+  auto y2 = hc[Constituent::kO1].tide / amp2_;
+  auto y3 = hc[Constituent::kK1].tide / amp3_;
+  auto y4 = hc[Constituent::kN2].tide / amp4_;
+  auto y5 = hc[Constituent::kM2].tide / amp5_;
+  auto y6 = hc[Constituent::kS2].tide / amp6_;
+  auto y7 = hc[Constituent::kNode].tide / amp7_;
+  auto y8 = hc[Constituent::kSa].tide / amp8_;
+  auto y9 = hc[Constituent::kMm].tide / amp9_;
 
-  if (calculation_type_ == CalculationType::kMinor) {
-    for (const auto& constituent : diurnal_keys_) {
-      auto& updated_item = hc[constituent];
-      if (!updated_item.second) {
-        continue;  // Skip if the constituent is not computed by inference
-      }
-      const auto& inferred_item = inferred_diurnal_.at(constituent);
+  for (const auto& constituent : diurnal_keys_) {
+    auto& updated_item = hc[constituent];
+    if (!updated_item.is_inferred || updated_item.type != kShortPeriod) {
+      continue;  // Skip if the constituent is not computed by inference
+    }
+    const auto& inferred_item = inferred_diurnal_.at(constituent);
 
-      auto x = inferred_item.first;
-      auto y = interpolation_1_(x1_, y1, x2_, y2, x3_, y3, x);
-      auto [fk, fh, fl] = love_pmm95b(x);
-      auto gam = 1 + fk - fh;
-      updated_item.first = y * gam * inferred_item.second;
-    }
+    auto x = inferred_item.first;
+    auto y = interpolation_1_(x1_, y1, x2_, y2, x3_, y3, x);
+    auto [fk, fh, fl] = love_pmm95b(x);
+    auto gam = 1 + fk - fh;
+    updated_item.tide = y * gam * inferred_item.second;
+  }
 
-    for (const auto& constituent : semidiurnal_keys_) {
-      auto& updated_item = hc[constituent];
-      if (!updated_item.second) {
-        continue;  // Skip if the constituent is not computed by inference
-      }
-      const auto& inferred_item = inferred_semidiurnal_.at(constituent);
-      auto y = interpolation_2_(x4_, y4, x5_, y5, x6_, y6, inferred_item.first);
-      updated_item.first = y * inferred_item.second;
+  for (const auto& constituent : semidiurnal_keys_) {
+    auto& updated_item = hc[constituent];
+    if (!updated_item.is_inferred || updated_item.type != kShortPeriod) {
+      continue;  // Skip if the constituent is not computed by inference
     }
-  } else {
-    for (const auto& constituent : long_period_keys_) {
-      auto& updated_item = hc[constituent];
-      if (!updated_item.second) {
-        continue;  // Skip if the constituent is not computed by inference
-      }
-      const auto& inferred_item = inferred_long_period_.at(constituent);
-      auto y = linear_interpolation(x7_, y7, x8_, y8, x9_, y9, inferred_item.first);
-      updated_item.first = y * inferred_item.second;
+    const auto& inferred_item = inferred_semidiurnal_.at(constituent);
+    auto y = interpolation_2_(x4_, y4, x5_, y5, x6_, y6, inferred_item.first);
+    updated_item.tide = y * inferred_item.second;
+  }
+  for (const auto& constituent : long_period_keys_) {
+    auto& updated_item = hc[constituent];
+    if (!updated_item.is_inferred || updated_item.type != kLongPeriod) {
+      continue;  // Skip if the constituent is not computed by inference
     }
+    const auto& inferred_item = inferred_long_period_.at(constituent);
+    auto y =
+        linear_interpolation(x7_, y7, x8_, y8, x9_, y9, inferred_item.first);
+    updated_item.tide = y * inferred_item.second;
   }
 
   // If needed, convert back to amp, phase...
   if (input_type_ == InputType::kAmplitude) {
-    for (auto& [tide, _] : hc.items()) {
+    for (auto& item : hc.items()) {
+      auto& tide = item.tide;
       auto amp = std::abs(tide);
       auto phase = std::arg(tide);
       tide = Complex(amp, degrees(phase));

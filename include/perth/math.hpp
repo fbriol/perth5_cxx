@@ -14,6 +14,30 @@
 
 namespace perth {
 
+/// @brief Constructs a NaN value of type T.
+template <typename T>
+constexpr auto construct_nan() -> T {
+  if constexpr (std::is_floating_point_v<T>) {
+    return std::numeric_limits<T>::quiet_NaN();
+  } else if constexpr (std::is_same_v<T, std::complex<float>>) {
+    return std::complex<float>(std::numeric_limits<float>::quiet_NaN(),
+                               std::numeric_limits<float>::quiet_NaN());
+  } else if constexpr (std::is_same_v<T, std::complex<double>>) {
+    return std::complex<double>(std::numeric_limits<double>::quiet_NaN(),
+                                std::numeric_limits<double>::quiet_NaN());
+  } else if constexpr (std::is_same_v<T, std::complex<long double>>) {
+    return std::complex<long double>(
+        std::numeric_limits<long double>::quiet_NaN(),
+        std::numeric_limits<long double>::quiet_NaN());
+  } else {
+    static_assert(std::is_floating_point_v<T> ||
+                      std::is_same_v<T, std::complex<float>> ||
+                      std::is_same_v<T, std::complex<double>> ||
+                      std::is_same_v<T, std::complex<long double>>,
+                  "T must be a floating-point or complex type");
+  }
+}
+
 /// @brief Evaluate x^n
 /// @tparam T The type of the number.
 /// @tparam N The power to raise the number to.

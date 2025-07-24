@@ -8,6 +8,13 @@
 #include "perth/eigen.hpp"
 
 namespace perth {
+
+/// @brief Possible type of tidal wave.
+enum ConstituentType : uint8_t {
+  kLongPeriod = 0,  //!< Long period tidal waves
+  kShortPeriod      //!< Short period tidal waves
+};
+
 enum Constituent : uint8_t {
   kNode = 0,
   kSa,
@@ -63,6 +70,14 @@ enum Constituent : uint8_t {
   kNumConstituents,
 };
 
+/// @brief Data structure that holds the tide of a constituent.
+struct TideComponent {
+  Complex tide;              //!< Tide of the constituent
+  ConstituentType type;      //!< Type of tidal wave
+  bool is_inferred = false;  //!< Whether the tide was inferred from the
+                             //!< constituents
+};
+
 constexpr std::size_t kNumConstituentItems =
     static_cast<std::size_t>(kNumConstituents);
 
@@ -107,10 +122,11 @@ class ConstituentArray {
 
 using Data = std::pair<Vector6b, int8_t>;
 using ConstituentTable = ConstituentArray<Data>;
-using TideTable = ConstituentArray<std::pair<Complex, bool>>;
+using TideTable = ConstituentArray<TideComponent>;
 
 auto make_constituent_table() -> ConstituentTable;
 
-auto make_tide_table(const std::vector<Constituent>& constituents = {}) -> TideTable;
+auto make_tide_table(const std::vector<Constituent> &constituents = {})
+    -> TideTable;
 
 }  // namespace perth
