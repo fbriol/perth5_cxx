@@ -72,7 +72,10 @@ enum Constituent : uint8_t {
 
 /// @brief Data structure that holds the tide of a constituent.
 struct TideComponent {
-  Complex tide;              //!< Tide of the constituent
+  Vector7b doodson_number;  //!< Doodson number of the constituent
+  Complex tide;             //!< Tide of the constituent
+
+  double tidal_argument;     //!< Doodson argument
   ConstituentType type;      //!< Type of tidal wave
   bool is_inferred = false;  //!< Whether the tide was inferred from the
                              //!< constituents
@@ -115,16 +118,20 @@ class ConstituentArray {
     return std::vector<Constituent>(keys_.begin(), keys_.end());
   }
 
+  constexpr auto at(const size_t index) const
+      -> const std::pair<Constituent, T> {
+    if (index >= static_cast<size_t>(kNumConstituentItems)) {
+      throw std::out_of_range("Index out of range");
+    }
+    return {keys_[index], items_[index]};
+  }
+
  private:
   Key keys_{};
   Item items_{};
 };
 
-using Data = std::pair<Vector6b, int8_t>;
-using ConstituentTable = ConstituentArray<Data>;
 using TideTable = ConstituentArray<TideComponent>;
-
-auto make_constituent_table() -> ConstituentTable;
 
 auto make_tide_table(const std::vector<Constituent> &constituents = {})
     -> TideTable;

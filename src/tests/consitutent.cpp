@@ -145,66 +145,6 @@ TYPED_TEST(ConstituentArrayTest, RetrieveKeysAsVector) {
   }
 }
 
-// Tests for make_constituent_table function
-class ConstituentTableTest : public ::testing::Test {
- protected:
-  ConstituentTable table = make_constituent_table();
-};
-
-TEST_F(ConstituentTableTest, TableSize) {
-  EXPECT_EQ(table.size(), kNumConstituentItems);
-  EXPECT_EQ(table.size(),
-            static_cast<std::size_t>(Constituent::kNumConstituents));
-}
-
-TEST_F(ConstituentTableTest, AllConstituentsPresent) {
-  auto keys_vector = table.retrieve_keys_as_vector();
-
-  // Check that all constituent values from 0 to kNumConstituents-1 are present
-  std::vector<bool> found(kNumConstituentItems, false);
-  for (auto constituent : keys_vector) {
-    std::size_t index = static_cast<std::size_t>(constituent);
-    ASSERT_LT(index, kNumConstituentItems);
-    found[index] = true;
-  }
-
-  for (std::size_t i = 0; i < kNumConstituentItems; ++i) {
-    EXPECT_TRUE(found[i]) << "Constituent " << i << " not found in table";
-  }
-}
-
-TEST_F(ConstituentTableTest, SpecificConstituentData) {
-  // Test specific known constituents
-  auto node_data = table[Constituent::kNode];
-  EXPECT_EQ(node_data.first[0], 0);
-  EXPECT_EQ(node_data.first[1], 0);
-  EXPECT_EQ(node_data.first[2], 0);
-  EXPECT_EQ(node_data.first[3], 0);
-  EXPECT_EQ(node_data.first[4], 1);
-  EXPECT_EQ(node_data.first[5], 0);
-  EXPECT_EQ(node_data.second, 2);
-
-  auto m2_data = table[Constituent::kM2];
-  EXPECT_EQ(m2_data.first[0], 2);
-  EXPECT_EQ(m2_data.first[1], 0);
-  EXPECT_EQ(m2_data.first[2], 0);
-  EXPECT_EQ(m2_data.first[3], 0);
-  EXPECT_EQ(m2_data.first[4], 0);
-  EXPECT_EQ(m2_data.first[5], 0);
-  EXPECT_EQ(m2_data.second, 0);
-}
-
-TEST_F(ConstituentTableTest, DataConsistency) {
-  // Verify that keys match the constituent indices
-  const auto& keys = table.keys();
-  for (std::size_t i = 0; i < kNumConstituentItems; ++i) {
-    Constituent constituent = keys[i];
-    std::size_t constituent_index = static_cast<std::size_t>(constituent);
-    EXPECT_EQ(constituent_index, i)
-        << "Key at position " << i << " should match its constituent value";
-  }
-}
-
 // Tests for make_tide_table function
 class TideTableTest : public ::testing::Test {
  private:
@@ -279,24 +219,6 @@ TEST_F(TideTableTest, Modifiability) {
   EXPECT_EQ(table[Constituent::kM2].tide.imag(), 2.3);
   EXPECT_EQ(table[Constituent::kS2].tide.real(), -0.7);
   EXPECT_EQ(table[Constituent::kS2].tide.imag(), 1.2);
-}
-
-// Integration test for both tables
-TEST(ConstituentIntegrationTest, TableConsistency) {
-  auto constituent_table = make_constituent_table();
-  auto tide_table = make_tide_table({});
-
-  // Both tables should have the same size
-  EXPECT_EQ(constituent_table.size(), tide_table.size());
-
-  // Both tables should have the same keys
-  const auto& const_keys = constituent_table.keys();
-  const auto& tide_keys = tide_table.keys();
-
-  for (std::size_t i = 0; i < kNumConstituentItems; ++i) {
-    EXPECT_EQ(const_keys[i], tide_keys[i])
-        << "Keys should match at position " << i;
-  }
 }
 
 }  // namespace perth

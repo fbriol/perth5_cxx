@@ -10,9 +10,13 @@ namespace perth {
 /// double precision values.
 using Vector6d = Eigen::Vector<double, 6>;
 
-/// @brief Type alias for a 6-dimensional vector using Eigen library, storing
+/// @brief Type alias for a 7-dimensional vector using Eigen library, storing
+/// double precision values.
+using Vector7d = Eigen::Vector<double, 7>;
+
+/// @brief Type alias for a 7-dimensional vector using Eigen library, storing
 /// int8_t precision values.
-using Vector6b = Eigen::Vector<int8_t, 6>;
+using Vector7b = Eigen::Vector<int8_t, 7>;
 
 /// @brief Type alias for complex numbers storing double precision values.
 using Complex = std::complex<double>;

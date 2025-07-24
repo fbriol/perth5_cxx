@@ -134,10 +134,11 @@ auto populate_and_sort_inferred(
         mutable_inferred,
     std::vector<Constituent>& keys,
     const std::unordered_map<Constituent, double>& inferred,
-    const ConstituentTable& constituents) -> void {
+    const TideTable& components) -> void {
   for (auto [ident, ampl] : inferred) {
-    mutable_inferred[ident] = {
-        tidal_frequency(constituents[ident].first.cast<double>()), ampl};
+    auto doodson_number =
+        components[ident].doodson_number.head(6).cast<double>();
+    mutable_inferred[ident] = {tidal_frequency(doodson_number), ampl};
     keys.push_back(ident);
   }
 
@@ -152,14 +153,14 @@ auto populate_and_sort_inferred(
 }
 
 Inference::Inference(InterpolationType interpolation_type, InputType input_type,
-                     const ConstituentTable& constituents)
+                     const TideTable& components)
     : input_type_(input_type) {
   populate_and_sort_inferred(inferred_diurnal_, diurnal_keys_,
-                             kInferredDiurnalConstituents_, constituents);
+                             kInferredDiurnalConstituents_, components);
   populate_and_sort_inferred(inferred_semidiurnal_, semidiurnal_keys_,
-                             kInferredSemidiurnalConstituents_, constituents);
+                             kInferredSemidiurnalConstituents_, components);
   populate_and_sort_inferred(inferred_long_period_, long_period_keys_,
-                             kInferredLongPeriodConstituents_, constituents);
+                             kInferredLongPeriodConstituents_, components);
 
   auto& q1 = inferred_diurnal_[Constituent::kQ1];
   auto& o1 = inferred_diurnal_[Constituent::kO1];
@@ -207,7 +208,7 @@ Inference::Inference(InterpolationType interpolation_type, InputType input_type,
   }
 }
 
-auto Inference::operator()(TideTable& hc) const -> void {
+auto Inference::operator()(TideTable& hc, const double lat) const -> void {
   // If needed, convert amp, phase to inphase, quad...
   if (input_type_ == InputType::kAmplitude) {
     for (auto& item : hc.items()) {
@@ -222,9 +223,10 @@ auto Inference::operator()(TideTable& hc) const -> void {
   auto y4 = hc[Constituent::kN2].tide / amp4_;
   auto y5 = hc[Constituent::kM2].tide / amp5_;
   auto y6 = hc[Constituent::kS2].tide / amp6_;
-  auto y7 = hc[Constituent::kNode].tide / amp7_;
   auto y8 = hc[Constituent::kSa].tide / amp8_;
   auto y9 = hc[Constituent::kMm].tide / amp9_;
+
+  auto y7 = evaluate_node_tide(hc[Constituent::kNode], lat) / amp7_;
 
   for (const auto& constituent : diurnal_keys_) {
     auto& updated_item = hc[constituent];

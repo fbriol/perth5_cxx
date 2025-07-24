@@ -35,9 +35,10 @@ TEST(DoodsonTest, CalculateDoodsonArgument) {
   constexpr double delta = 53.026754231840584;
 
   // kNode constituent data
-  const Data data = {{0, 0, 0, 0, 1, 0}, 2};
+  const Vector7b doodson_number = {0, 0, 0, 0, 1, 0, 2};
 
-  double result = calculate_doodson_argument(time, delta, data);
+  double result =
+      calculate_doodson_argument(time, delta, doodson_number.cast<double>());
   EXPECT_NEAR(result, 86.139014533657019, 1e-10);
 }
 

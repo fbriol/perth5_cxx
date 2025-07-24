@@ -19,13 +19,11 @@ auto calculate_celestial_vector(double time, double delta) noexcept -> Vector6d;
 /// @brief Evaluate Doodson's tidal argument at a given time.
 /// @param[in] time Universal Time in decimal Modified Julian Days.
 /// @param[in] delta Delta T, in seconds.
-/// @param[in] data Constituent data
+/// @param[in] component Tide component to evaluate.
 /// @return Doodson's tidal argument
-inline auto calculate_doodson_argument(double time, double delta,
-                                       const Data& data) -> double {
-  Eigen::Vector<double, 7> doodson_number;
-  doodson_number << data.first.cast<double>(), data.second;
-
+inline auto calculate_doodson_argument(
+    double time, double delta, const Eigen::Ref<const Vector7d>& doodson_number)
+    -> double {
   Eigen::Vector<double, 7> beta;
   beta << calculate_celestial_vector(time, delta), 90.0;
 

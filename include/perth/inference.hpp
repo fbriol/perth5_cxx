@@ -5,6 +5,7 @@
 
 #include "perth/constituent.hpp"
 #include "perth/eigen.hpp"
+#include "perth/math.hpp"
 
 namespace perth {
 
@@ -21,9 +22,9 @@ enum class InputType {
 class Inference {
  public:
   Inference(InterpolationType interpolation_type, InputType input_type,
-            const ConstituentTable& constituents);
+            const TideTable& components);
 
-  auto operator()(TideTable& hc) const -> void;
+  auto operator()(TideTable& hc, const double lat = 0) const -> void;
 
  private:
   /// @brief Type for interpolation functions.
@@ -92,6 +93,23 @@ class Inference {
                         const Complex&,
                         double)>
       interpolation_2_;  ///< Interpolation function to use for semidurnal
+
+  /// @brief Returns inphase/quad components of the 18.6-y equilibrium node
+  /// tide. This is used only if inference is requested but the node tide is
+  /// missing.
+  /// @param node The TideComponent for the node constituent.
+  /// @param lat The latitude for the computation.
+  auto evaluate_node_tide(TideComponent& node, const double lat) const
+      -> const Complex& {
+    if (node.is_inferred) {
+      constexpr auto gamma2 = 0.682;
+      constexpr auto amplitude = 0.0279;  // m
+      auto p20 = 0.5 - 1.5 * pow<2>(std::sin(radians(lat)));
+      auto xi = gamma2 * p20 * std::sqrt(1.25 / pi<double>());
+      node.tide = std::move(Complex(xi * amplitude, 0.0));
+    }
+    return node.tide;
+  }
 };
 
 }  // namespace perth

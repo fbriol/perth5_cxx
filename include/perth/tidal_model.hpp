@@ -13,6 +13,7 @@
 #include "perth/doodson.hpp"
 #include "perth/grid.hpp"
 #include "perth/math.hpp"
+#include "perth/nodal_corrections.hpp"
 
 namespace perth {
 
@@ -35,28 +36,11 @@ enum TideType : uint8_t {
 using ConstituentValues =
     std::vector<std::pair<Constituent, std::complex<double>>>;
 
-struct CelestialArguments {
-  /// @brief The time in seconds for which the arguments are valid.
-  double time;
-  /// @brief The delta time in seconds used to compute the celestial vector.
-  double delta;
-  /// @brief The celestial vector used to evaluate the tidal constituents.
-  Vector6d celestial_vector;
-};
-
 class Accelerator {
  public:
   Accelerator(const double time_tolerance, const size_t n_constituents)
-      : time_tolerance_(time_tolerance),
-        args_{std::numeric_limits<double>::max(), {}} {
+      : time_tolerance_(time_tolerance) {
     values_.reserve(n_constituents);
-  }
-
-  auto doodson_argument(const Eigen::Ref<const Vector6d>& numbers) const
-      -> double {
-    auto beta = calculate_celestial_vector(args_.time, args_.delta);
-    auto arg = beta.dot(numbers);
-    return std::fmod(arg, 360.0);
   }
 
   /// @brief Casts the object to a pointer of type T.
@@ -80,6 +64,11 @@ class Accelerator {
     return values_;
   }
 
+  constexpr auto nodal_corrections() const noexcept
+      -> const std::vector<NodalCorrections>& {
+    return nodal_corrections_;
+  }
+
   /// @brief Clears the cached interpolated values.
   inline auto clear() noexcept -> void { values_.clear(); }
 
@@ -90,27 +79,26 @@ class Accelerator {
     values_.emplace_back(constituent, value);
   }
 
-  auto update_args(const double time) -> const Vector6d& {
-    if (std::abs(time - args_.time) > time_tolerance_) {
-      args_.delta = calculate_delta_time(time);
-      args_.time = time;
-      args_.celestial_vector = calculate_celestial_vector(time, delta_);
-    }
-    return args_.celestial_vector;
-  }
+  auto update_args(const double time, const double group_modulations,
+                   const std::vector<Constituent>& constituents,
+                   TideTable& table) -> void;
 
  private:
   /// @brief Time in seconds for which astronomical angles are considered
   /// constant
   double time_tolerance_;
 
-  /// @brief The last angle used to evaluate the tidal constituents.
-  CelestialArguments args_;
+  /// @brief The time used to compute the celestial vector.
+  double time_{std::numeric_limits<double>::max()};
+
+  /// @brief Latest delta time (TT - UT) used for celestial calculations.
+  double delta_{std::numeric_limits<double>::max()};
 
   /// @brief The tidal constituent values interpolated at the last point.
   ConstituentValues values_;
 
-  double delta_{std::numeric_limits<double>::max()};
+  /// @brief The latest nodal corrections computed.
+  std::vector<NodalCorrections> nodal_corrections_;
 
   double x1_{std::numeric_limits<double>::max()};
   double x2_{std::numeric_limits<double>::max()};
@@ -135,7 +123,7 @@ class TidalModel {
   }
 
   inline auto add_constituent(const Constituent ident,
-                              Vector<std::complex<T>> wave) -> void {
+                              Eigen::Vector<std::complex<T>, -1> wave) -> void {
     if (wave.size() != lon_.size() * lat_.size()) {
       throw std::invalid_argument("wave size does not match expected size");
     }
@@ -148,7 +136,7 @@ class TidalModel {
   inline auto interpolate(const double lon, const double lat, TideTable& table,
                           Accelerator* acc) const -> Quality {
     Quality quality;
-    for (const auto& item : this->interpolate(point, quality, acc)) {
+    for (const auto& item : this->interpolate(lon, lat, quality, acc)) {
       table[item.first] = std::move(item.second);
     }
     return quality;
@@ -209,8 +197,8 @@ inline auto TidalModel<T>::interpolate(const double lon, const double lat,
   };
 
   // Find the nearest point in the grid
-  auto lon_index = lon_.find_indices(point.lon());
-  auto lat_index = lat_.find_indices(point.lat());
+  auto lon_index = lon_.find_indices(lon);
+  auto lat_index = lat_.find_indices(lat);
 
   if (!lon_index || !lat_index) {
     acc->clear();
@@ -225,7 +213,7 @@ inline auto TidalModel<T>::interpolate(const double lon, const double lat,
   const auto y1 = lat_(j1);
   const auto y2 = lat_(j2);
 
-  if (x1 == x1_ && x2 == x2_ && y1 == y1_ && y2 == y2_) {
+  if (x1 == acc->x1_ && x2 == acc->x2_ && y1 == acc->y1_ && y2 == acc->y2_) {
     // If the point is already cached, return the cached values.
     return acc->values();
   }
