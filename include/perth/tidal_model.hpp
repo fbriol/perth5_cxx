@@ -3,6 +3,7 @@
 #include <complex>
 #include <cstdint>
 #include <limits>
+#include <memory>
 #include <stdexcept>
 #include <unordered_map>
 #include <vector>
@@ -112,7 +113,7 @@ class Accelerator {
 };
 
 template <typename T>
-class TidalModel {
+class TidalModel : public std::enable_shared_from_this<TidalModel<T>> {
  public:
   TidalModel(Axis lon, Axis lat, const TideType tide_type,
              const bool row_major = true)

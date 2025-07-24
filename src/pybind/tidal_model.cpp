@@ -1,6 +1,7 @@
 #include "tidal_model.hpp"
 
 #include <nanobind/eigen/dense.h>
+#include <nanobind/stl/shared_ptr.h>
 #include <nanobind/stl/vector.h>
 
 #include "perth/tidal_model.hpp"
@@ -34,7 +35,11 @@ auto bind_tidal_model(nanobind::module_& m, const char* name) -> void {
       .def("accelerator", &perth::TidalModel<T>::accelerator,
            nb::arg("time_tolerance"),
            "Create an accelerator for efficient repeated interpolations",
-           nb::rv_policy::take_ownership);
+           nb::rv_policy::take_ownership)
+      .def(
+          "shared_from_this",
+          [](perth::TidalModel<T>& self) { return self.shared_from_this(); },
+          "Get a shared pointer to the tidal model instance");
 }
 
 auto instantiate_tidal_model(nanobind::module_& m) -> void {
