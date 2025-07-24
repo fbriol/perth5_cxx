@@ -152,8 +152,9 @@ auto populate_and_sort_inferred(
             });
 }
 
-Inference::Inference(InterpolationType interpolation_type, InputType input_type,
-                     const TideTable& components)
+Inference::Inference(const TideTable& components,
+                     const InterpolationType interpolation_type,
+                     const InputType input_type)
     : input_type_(input_type) {
   populate_and_sort_inferred(inferred_diurnal_, diurnal_keys_,
                              kInferredDiurnalConstituents_, components);

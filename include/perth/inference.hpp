@@ -21,8 +21,10 @@ enum class InputType {
 
 class Inference {
  public:
-  Inference(InterpolationType interpolation_type, InputType input_type,
-            const TideTable& components);
+  Inference(const TideTable& components,
+            const InterpolationType interpolation_type =
+                InterpolationType::kLinearAdmittance,
+            const InputType input_type = InputType::kHormonic);
 
   auto operator()(TideTable& hc, const double lat = 0) const -> void;
 
