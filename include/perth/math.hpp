@@ -3,6 +3,7 @@
 #pragma once
 
 #include <cmath>
+#include <complex>
 #include <numbers>
 
 #if defined(__GNUC__) && (__GNUC__ >= 11) || \
@@ -186,6 +187,31 @@ constexpr auto normalize_angle(const T& x, const T& min = T(-180),
                                const T& circle = T(360)) noexcept -> T {
   return remainder(x - min, circle) + min;
 }
+
+/// @brief Check if two values are approximately equal within a given epsilon.
+///
+/// This function checks if two values are approximately equal within a given
+/// epsilon. It is specifically designed for floating-point types.
+///
+/// @tparam T The type of the values.
+/// @param[in] a The first value.
+/// @param[in] b The second value.
+/// @param[in] epsilon The epsilon value for comparison.
+/// @return True if the values are approximately equal, false otherwise.
+template <typename T,
+          std::enable_if_t<std::is_floating_point_v<T>, T>* = nullptr>
+constexpr auto is_same(const T& a, const T& b, const T& epsilon) noexcept
+    -> bool {
+  auto diff = std::fabs(a - b);
+  if (diff <= epsilon) {
+    return true;
+  }
+  if (diff < std::fmax(std::fabs(a), std::fabs(b)) * epsilon) {
+    return true;
+  }
+  return false;
+}
+
 /// @brief Evaluates a polynomial using Horner's method.
 ///
 /// @tparam T The type of the input and output values.

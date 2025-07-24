@@ -15,6 +15,7 @@ enum ConstituentType : uint8_t {
   kShortPeriod      //!< Short period tidal waves
 };
 
+/// @brief Enum class representing tidal constituents.
 enum Constituent : uint8_t {
   kNode = 0,
   kSa,

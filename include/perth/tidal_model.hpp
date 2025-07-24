@@ -57,6 +57,11 @@ class Accelerator {
     return reinterpret_cast<T*>(this);
   }
 
+  constexpr auto x1() const noexcept -> double { return x1_; }
+  constexpr auto x2() const noexcept -> double { return x2_; }
+  constexpr auto y1() const noexcept -> double { return y1_; }
+  constexpr auto y2() const noexcept -> double { return y2_; }
+
   /// @brief Returns the tidal constituent values interpolated at the given
   /// point.
   /// @return the tidal constituent values interpolated at the given point.
@@ -130,14 +135,11 @@ class TidalModel {
     this->data_.emplace(ident, std::move(wave));
   }
 
-  auto interpolate(const double lon, const double lat, Quality& quality,
-                   Accelerator* acc) const -> const ConstituentValues&;
-
   inline auto interpolate(const double lon, const double lat, TideTable& table,
                           Accelerator* acc) const -> Quality {
     Quality quality;
     for (const auto& item : this->interpolate(lon, lat, quality, acc)) {
-      table[item.first] = std::move(item.second);
+      table[item.first].tide = std::move(item.second);
     }
     return quality;
   }
@@ -163,7 +165,7 @@ class TidalModel {
 
  private:
   /// The constituents of the tidal model.
-  std::unordered_map<Constituent, std::vector<std::complex<T>>> data_;
+  std::unordered_map<Constituent, Eigen::Vector<std::complex<T>, -1>> data_;
   /// Longitude axis.
   Axis lon_;
   /// Latitude axis.
@@ -172,6 +174,9 @@ class TidalModel {
   bool row_major_;
   /// Tide type
   TideType tide_type_;
+
+  auto interpolate(const double lon, const double lat, Quality& quality,
+                   Accelerator* acc) const -> const ConstituentValues&;
 };
 
 template <typename T>
@@ -187,8 +192,6 @@ inline auto TidalModel<T>::interpolate(const double lon, const double lat,
   // Reset the values to undefined if the point is not within the grid or if
   // the model is undefined for the given point.
   auto reset_values_to_undefined = [&]() -> const ConstituentValues& {
-    std::numeric_limits<double>::quiet_NaN();
-
     for (const auto& item : this->data_) {
       acc->emplace_back(item.first, undefined_value);
     }
@@ -213,7 +216,8 @@ inline auto TidalModel<T>::interpolate(const double lon, const double lat,
   const auto y1 = lat_(j1);
   const auto y2 = lat_(j2);
 
-  if (x1 == acc->x1_ && x2 == acc->x2_ && y1 == acc->y1_ && y2 == acc->y2_) {
+  if (x1 == acc->x1() && x2 == acc->x2() && y1 == acc->y1() &&
+      y2 == acc->y2()) {
     // If the point is already cached, return the cached values.
     return acc->values();
   }

@@ -40,5 +40,7 @@ if(GTest_FOUND)
   add_subdirectory(src/tests)
 endif()
 
-# # Create the Python module file(GLOB_RECURSE PYBIND_SOURCES
-# "cxx/pybind/*.cpp") nanobind_add_module(_core ${PYBIND_SOURCES})
+# Create the Python module
+file(GLOB_RECURSE PYBIND_SOURCES "src/pybind/*.cpp")
+nanobind_add_module(_core ${PYBIND_SOURCES})
+target_link_libraries(_core PRIVATE perth)
