@@ -19,6 +19,7 @@ auto bind_perth(nanobind::module_& m, const char* name) -> void {
       .def("evaluate", &perth::Perth<T>::evaluate, nb::arg("lon"),
            nb::arg("lat"), nb::arg("time"), nb::arg("time_tolerance") = 0.0,
            nb::arg("interpolation_type") = std::nullopt,
+           nb::arg("num_threads") = 0,
            "Evaluate tidal values at a given longitude, latitude, and time",
            nb::call_guard<nb::gil_scoped_release>())
       .def_prop_ro("tidal_model", &perth::Perth<T>::tidal_model,

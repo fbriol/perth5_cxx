@@ -125,6 +125,7 @@ class PerthFloat32:
         time: VectorInt64,
         time_tolerance: float = 0.0,
         interpolation_type: InterpolationType | None = None,
+        num_threads: int = 0,
     ) -> tuple[VectorFloat64, VectorFloat64, VectorInt8]: ...
     @property
     def tidal_model(self) -> TidalModelFloat32: ...
@@ -142,6 +143,7 @@ class PerthFloat64:
         time: VectorInt64,
         time_tolerance: float = 0.0,
         interpolation_type: InterpolationType | None = None,
+        num_threads: int = 0,
     ) -> tuple[VectorFloat64, VectorFloat64, VectorInt8]: ...
     @property
     def tidal_model(self) -> TidalModelFloat64: ...

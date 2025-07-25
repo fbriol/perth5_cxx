@@ -8,6 +8,7 @@
 #include "perth/doodson.hpp"
 #include "perth/inference.hpp"
 #include "perth/nodal_corrections.hpp"
+#include "perth/parallel_for.hpp"
 #include "perth/tidal_model.hpp"
 
 namespace perth {
@@ -27,12 +28,19 @@ class Perth {
   /// @param[in] time_tolerance Tolerance for time matching in seconds.
   /// @param[in] interpolation_type Type of interpolation to use to compute
   /// inferred constituents. If equal to std::nullopt, no inference is done.
-  auto evaluate(const Eigen::Ref<const Eigen::VectorXd>& lon,
-                const Eigen::Ref<const Eigen::VectorXd>& lat,
-                const Eigen::Ref<const Eigen::Vector<int64_t, -1>>& time,
-                const double time_tolerance = 0,
-                const std::optional<InterpolationType>& interpolation_type =
-                    std::nullopt) const
+  /// @param[in] num_threads Number of threads to use for parallel computation.
+  /// If equal to 0, the number of threads is determined automatically.
+  /// @return A tuple containing:
+  ///   - tide: Short-period tidal elevation values
+  ///   - tide_lp: Long-period tidal elevation values
+  ///   - quality: Quality flags indicating interpolation success/failure
+  auto evaluate(
+      const Eigen::Ref<const Eigen::VectorXd>& lon,
+      const Eigen::Ref<const Eigen::VectorXd>& lat,
+      const Eigen::Ref<const Eigen::Vector<int64_t, -1>>& time,
+      const double time_tolerance = 0,
+      const std::optional<InterpolationType>& interpolation_type = std::nullopt,
+      const size_t num_threads = 0) const
       -> std::tuple<Eigen::VectorXd, Eigen::VectorXd,
                     Eigen::Vector<int8_t, -1>>;
 
@@ -98,7 +106,8 @@ auto Perth<T>::evaluate(
     const Eigen::Ref<const Eigen::VectorXd>& lat,
     const Eigen::Ref<const Eigen::Vector<int64_t, -1>>& time,
     const double time_tolerance,
-    const std::optional<InterpolationType>& interpolation_type) const
+    const std::optional<InterpolationType>& interpolation_type,
+    const size_t num_threads) const
     -> std::tuple<Eigen::VectorXd, Eigen::VectorXd, Eigen::Vector<int8_t, -1>> {
   auto size = lon.size();
   // Check that the input vectors have the same size.
@@ -118,27 +127,30 @@ auto Perth<T>::evaluate(
   Eigen::VectorXd tide_lp = Eigen::VectorXd::Zero(size);
   Eigen::Vector<int8_t, -1> quality = Eigen::Vector<int8_t, -1>::Zero(size);
 
-  // Create the tide table and accelerator.
-  TideTable tide_table = make_tide_table(tidal_model_->identifiers());
-  Accelerator acc(time_tolerance, tide_table.size());
+  auto worker = [&](const size_t start, const size_t end) -> void {
+    // Create the tide table and accelerator.
+    TideTable tide_table = make_tide_table(tidal_model_->identifiers());
+    Accelerator acc(time_tolerance, tide_table.size());
 
-  auto inference = std::unique_ptr<Inference>(
-      interpolation_type.has_value()
-          ? new Inference(tide_table, *interpolation_type)
-          : nullptr);
-  auto inference_ptr = inference.get();
+    auto inference = std::unique_ptr<Inference>(
+        interpolation_type.has_value()
+            ? new Inference(tide_table, *interpolation_type)
+            : nullptr);
+    auto inference_ptr = inference.get();
 
-  for (auto ix = 0; ix < size; ++ix) {
-    // Evaluate the tide at the current position and time.
-    auto [tide_value, tide_lp_value, quality_value] =
-        evaluate_tide(lon(ix), lat(ix), epoch_to_modified_julian_date(time(ix)),
-                      tide_table, inference_ptr, &acc);
+    for (auto ix = start; ix < end; ++ix) {
+      // Evaluate the tide at the current position and time.
+      auto [tide_value, tide_lp_value, quality_value] = evaluate_tide(
+          lon(ix), lat(ix), epoch_to_modified_julian_date(time(ix)), tide_table,
+          inference_ptr, &acc);
 
-    // Store the results in the output vectors.
-    tide(ix) = tide_value;
-    tide_lp(ix) = tide_lp_value;
-    quality(ix) = static_cast<int8_t>(quality_value);
-  }
+      // Store the results in the output vectors.
+      tide(ix) = tide_value;
+      tide_lp(ix) = tide_lp_value;
+      quality(ix) = static_cast<int8_t>(quality_value);
+    }
+  };
+  parallel_for(worker, size, num_threads, 128);
   return {tide, tide_lp, quality};
 }
 
