@@ -85,6 +85,10 @@ auto Perth<T>::evaluate_tide(const double lon, const double lat,
              constituent_tide.imag() * nodal_correction.f * std::sin(x);
     if (component.type == ConstituentType::kLongPeriod) {
       tide_lp += h;
+      printf("%.12f %.12f %.12f %.12f %.12f %.12f %.12f\n",
+             constituent_tide.real(), constituent_tide.imag(),
+             nodal_correction.f, nodal_correction.u, component.tidal_argument,
+             h, tide_lp);
     } else {
       tide += h;
     }

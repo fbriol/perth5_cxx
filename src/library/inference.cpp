@@ -168,7 +168,6 @@ Inference::Inference(const TideTable& components,
   auto& m2 = inferred_semidiurnal_[Constituent::kM2];
   auto& s2 = inferred_semidiurnal_[Constituent::kS2];
   auto& node = inferred_long_period_[Constituent::kNode];
-  auto& sa = inferred_long_period_[Constituent::kSa];
   auto& mm = inferred_long_period_[Constituent::kMm];
   auto& mf = inferred_long_period_[Constituent::kMf];
 
@@ -179,8 +178,8 @@ Inference::Inference(const TideTable& components,
   x5_ = m2.first;
   x6_ = s2.first;
   x7_ = node.first;
-  x8_ = sa.first;
-  x9_ = mm.first;
+  x8_ = mm.first;
+  x9_ = mf.first;
 
   auto [fk, fh, fl] = love_pmm95b(x1_);
   amp1_ = q1.second * (1 + fk - fh);
@@ -193,8 +192,8 @@ Inference::Inference(const TideTable& components,
   amp5_ = m2.second;
   amp6_ = s2.second;
   amp7_ = node.second;
-  amp8_ = sa.second;
-  amp9_ = mm.second;
+  amp8_ = mm.second;
+  amp9_ = mf.second;
 
   if (interpolation_type == InterpolationType::kLinearAdmittance) {
     interpolation_1_ = linear_interpolation;
@@ -214,8 +213,8 @@ auto Inference::operator()(TideTable& hc, const double lat) const -> void {
   auto y4 = hc[Constituent::kN2].tide / amp4_;
   auto y5 = hc[Constituent::kM2].tide / amp5_;
   auto y6 = hc[Constituent::kS2].tide / amp6_;
-  auto y8 = hc[Constituent::kSa].tide / amp8_;
-  auto y9 = hc[Constituent::kMm].tide / amp9_;
+  auto y8 = hc[Constituent::kMm].tide / amp8_;
+  auto y9 = hc[Constituent::kMf].tide / amp9_;
 
   auto y7 = evaluate_node_tide(hc[Constituent::kNode], lat) / amp7_;
 

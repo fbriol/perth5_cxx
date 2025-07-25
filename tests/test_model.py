@@ -1,7 +1,7 @@
 import perth
 import perth._core
 
-from . import fetch_tide_model_files
+from . import fetch_got_files
 
 
 #: Interpolation in the original Perth model on float32, here we use float64
@@ -10,7 +10,7 @@ TOLERANCE = 1e-4
 
 
 def test_model(sad: str):
-    tide_model_files = fetch_tide_model_files(sad)
+    tide_model_files = fetch_got_files(sad)
     assert len(tide_model_files) > 0
 
     model = perth.load_model(tide_model_files)

@@ -189,16 +189,41 @@ def _validate_consistency_with_metadata(
     return max(metadata.dtype, amp.dtype, ph.dtype)
 
 
+def _create_axis(
+    values: numpy.ndarray, epsilon: float, is_periodic: bool = False
+) -> _core.Axis:
+    """Create an Axis object with filled values and specified properties."""
+    if values.dtype == numpy.float32:
+        # For 32-bit floats, recalculate axis properties to avoid precision
+        # loss when dealing with small grid step sizes
+        start = values[0].astype(numpy.float64)
+        end = values[-1].astype(numpy.float64)
+        step = (end - start) / (len(values) - 1)
+        return _core.Axis(
+            start,
+            end,
+            step,
+            epsilon=epsilon,
+            is_periodic=is_periodic,
+        )
+
+    return _core.Axis(
+        numpy.ma.filled(values, fill_value=numpy.nan),
+        epsilon=epsilon,
+        is_periodic=is_periodic,
+    )
+
+
 def _create_tidal_model(
     metadata: ModelMetadata, dtype: numpy.dtype
 ) -> _core.TidalModelFloat32 | _core.TidalModelFloat64:
     """Create the appropriate tidal model based on the data type."""
-    x_axis = _core.Axis(
+    x_axis = _create_axis(
         numpy.ma.filled(metadata.x_axis, fill_value=numpy.nan),
         epsilon=1e-6,
         is_periodic=True,
     )
-    y_axis = _core.Axis(
+    y_axis = _create_axis(
         numpy.ma.filled(metadata.y_axis, fill_value=numpy.nan),
         epsilon=1e-6,
     )

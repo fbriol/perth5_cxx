@@ -29,7 +29,7 @@ inline auto calculate_doodson_argument(
 
   // Compute argument as dot product with Doodson number
   double arg = doodson_number.dot(beta);
-  return std::fmod(arg, 360.0);
+  return normalize_angle(arg);
 }
 
 }  // namespace perth
