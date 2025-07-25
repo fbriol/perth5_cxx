@@ -11,7 +11,9 @@ namespace nb = nanobind;
 
 auto instantiate_tide(nanobind::module_ &m) -> void {
   nb::class_<perth::Perth<double>>(m, "Perth")
-      .def(nb::init<std::shared_ptr<perth::TidalModel<double>>, bool>())
+      .def(nb::init<std::shared_ptr<perth::TidalModel<double>>, bool>(),
+           nb::arg("model"), nb::arg("group_modulations") = false,
+           "Initialize Perth with a tidal model and optional group modulations")
       .def("evaluate", &perth::Perth<double>::evaluate, nb::arg("lon"),
            nb::arg("lat"), nb::arg("time"), nb::arg("time_tolerance") = 0.0,
            nb::arg("inference") = nullptr,

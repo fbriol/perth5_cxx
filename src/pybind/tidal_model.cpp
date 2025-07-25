@@ -17,12 +17,19 @@ auto bind_tidal_model(nanobind::module_& m, const char* name) -> void {
       .def("add_constituent", &perth::TidalModel<T>::add_constituent,
            nb::arg("constituent"), nb::arg("wave"),
            "Add a tidal constituent with its corresponding wave data")
-      .def("interpolate",
-           nb::overload_cast<const double, const double, perth::TideTable&,
-                             perth::Accelerator*>(
-               &perth::TidalModel<T>::interpolate, nb::const_),
-           nb::arg("lon"), nb::arg("lat"), nb::arg("table"), nb::arg("acc"),
-           "Interpolate tidal values into a tide table")
+      .def(
+          "interpolate",
+          [](const perth::TidalModel<T>& self, const double lon,
+             const double lat, perth::TideTable& table,
+             perth::Accelerator& acc) {
+            if (table.size() != self.size()) {
+              throw std::invalid_argument(
+                  "TideTable size must match the number of constituents");
+            }
+            return self.interpolate(lon, lat, table, &acc);
+          },
+          nb::arg("lon"), nb::arg("lat"), nb::arg("table"), nb::arg("acc"),
+          "Interpolate tidal values into a tide table")
       .def("empty", &perth::TidalModel<T>::empty,
            "Check if the model contains any constituents")
       .def("size", &perth::TidalModel<T>::size,
@@ -49,7 +56,19 @@ auto instantiate_tidal_model(nanobind::module_& m) -> void {
       .value("INTERPOLATED", perth::Quality::kInterpolated);
 
   // Bind the Accelerator class
-  nb::class_<perth::Accelerator>(m, "Accelerator");
+  nb::class_<perth::Accelerator>(m, "Accelerator")
+      .def(nb::init<double, size_t>(), nb::arg("time_tolerance"),
+           nb::arg("n_constituents"),
+           "Initialize an accelerator with a time tolerance and number of "
+           "constituents")
+      .def("clear", &perth::Accelerator::clear,
+           "Clear the cached interpolated values")
+      .def_prop_ro("x1", &perth::Accelerator::x1, "Get the x1 coordinate")
+      .def_prop_ro("x2", &perth::Accelerator::x2, "Get the x2 coordinate")
+      .def_prop_ro("y1", &perth::Accelerator::y1, "Get the y1 coordinate")
+      .def_prop_ro("y2", &perth::Accelerator::y2, "Get the y2 coordinate")
+      .def_prop_ro("values", &perth::Accelerator::values,
+                   "Get the cached interpolated values");
 
   // Bind both float and double versions of TidalModel
   bind_tidal_model<float>(m, "TidalModelFloat32");
