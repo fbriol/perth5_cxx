@@ -115,15 +115,20 @@ class Accelerator {
 template <typename T>
 class TidalModel : public std::enable_shared_from_this<TidalModel<T>> {
  public:
+  /// @brief Construct a tidal model with longitude and latitude axes.
+  /// @param lon Longitude axis (will be moved).
+  /// @param lat Latitude axis (will be moved).
+  /// @param row_major Whether the data is stored in longitude-major order.
+  /// @throw std::exception Strong exception safety guarantee.
   TidalModel(Axis lon, Axis lat, const bool row_major = true)
       : data_(),
         lon_(std::move(lon)),
         lat_(std::move(lat)),
         row_major_(row_major) {}
 
-  constexpr auto accelerator(const double time_tolerance) const
-      -> Accelerator* {
-    return new Accelerator(time_tolerance, this->data_.size());
+  [[nodiscard]] auto accelerator(const double time_tolerance) const
+      -> std::unique_ptr<Accelerator> {
+    return std::make_unique<Accelerator>(time_tolerance, this->data_.size());
   }
 
   inline auto add_constituent(
@@ -134,17 +139,25 @@ class TidalModel : public std::enable_shared_from_this<TidalModel<T>> {
     auto row_major = wave.rows() == lon_.size() && wave.cols() == lat_.size();
     if (row_major != row_major_) {
       throw std::invalid_argument(
-          "The data is not in the expected row-major order.");
+          "The data is not in the expected row-major order: expected " +
+          std::string(row_major_ ? "true" : "false") + ", got " +
+          std::string(row_major ? "true" : "false"));
     }
     if (row_major) {
       if (wave.rows() != lon_.size() || wave.cols() != lat_.size()) {
         throw std::invalid_argument(
-            "The data size does not match the axes size.");
+            "The data size does not match the axes size: expected (" +
+            std::to_string(lon_.size()) + "x" + std::to_string(lat_.size()) +
+            "), got (" + std::to_string(wave.rows()) + "x" +
+            std::to_string(wave.cols()) + ")");
       }
     } else {
       if (wave.rows() != lat_.size() || wave.cols() != lon_.size()) {
         throw std::invalid_argument(
-            "The data size does not match the axes size.");
+            "The data size does not match the axes size: expected (" +
+            std::to_string(lat_.size()) + "x" + std::to_string(lon_.size()) +
+            "), got (" + std::to_string(wave.rows()) + "x" +
+            std::to_string(wave.cols()) + ")");
       }
     }
     this->data_.emplace(ident,
@@ -162,13 +175,13 @@ class TidalModel : public std::enable_shared_from_this<TidalModel<T>> {
   }
 
   /// True if no tidal constituent is handled by the model.
-  constexpr auto empty() const -> bool { return data_.empty(); }
+  [[nodiscard]] auto empty() const -> bool { return data_.empty(); }
 
   /// Get the number of tidal constituents handled by the model.
-  constexpr auto size() const -> size_t { return data_.size(); }
+  [[nodiscard]] auto size() const -> size_t { return data_.size(); }
 
   /// Get the tidal constituent identifiers handled by the model.
-  inline auto identifiers() const -> std::vector<Constituent> {
+  [[nodiscard]] inline auto identifiers() const -> std::vector<Constituent> {
     auto result = std::vector<Constituent>();
     result.reserve(data_.size());
     for (const auto& item : data_) {
@@ -181,11 +194,11 @@ class TidalModel : public std::enable_shared_from_this<TidalModel<T>> {
   /// The constituents of the tidal model.
   std::unordered_map<Constituent, Eigen::Vector<std::complex<T>, -1>> data_;
   /// Longitude axis.
-  Axis lon_;
+  const Axis lon_;
   /// Latitude axis.
-  Axis lat_;
+  const Axis lat_;
   /// Whether the data is stored in longitude-major order.
-  bool row_major_;
+  const bool row_major_;
 
   auto interpolate(const double lon, const double lat, Quality& quality,
                    Accelerator* acc) const -> const ConstituentValues&;
@@ -264,11 +277,15 @@ inline auto TidalModel<T>::interpolate(const double lon, const double lat,
 
   // Set the quality of the interpolation based on the number of
   // surrounding points used for the interpolation.
-  quality = (n == 4)   ? Quality::kInterpolated
-            : (n == 3) ? Quality::kExtrapolated3
-            : (n == 2) ? Quality::kExtrapolated2
-            : (n == 1) ? Quality::kExtrapolated1
-                       : Quality::kUndefined;
+  quality = (n == static_cast<int64_t>(Quality::kInterpolated))
+                ? Quality::kInterpolated
+            : (n == static_cast<int64_t>(Quality::kExtrapolated3))
+                ? Quality::kExtrapolated3
+            : (n == static_cast<int64_t>(Quality::kExtrapolated2))
+                ? Quality::kExtrapolated2
+            : (n == static_cast<int64_t>(Quality::kExtrapolated1))
+                ? Quality::kExtrapolated1
+                : Quality::kUndefined;
   return acc->values();
 }
 

@@ -85,10 +85,6 @@ auto Perth<T>::evaluate_tide(const double lon, const double lat,
              constituent_tide.imag() * nodal_correction.f * std::sin(x);
     if (component.type == ConstituentType::kLongPeriod) {
       tide_lp += h;
-      printf("%.12f %.12f %.12f %.12f %.12f %.12f %.12f\n",
-             constituent_tide.real(), constituent_tide.imag(),
-             nodal_correction.f, nodal_correction.u, component.tidal_argument,
-             h, tide_lp);
     } else {
       tide += h;
     }
@@ -108,6 +104,14 @@ auto Perth<T>::evaluate(
   // Check that the input vectors have the same size.
   if (size != lat.size() || size != time.size()) {
     throw std::invalid_argument("Input vectors must have the same size.");
+  }
+  // Check for empty input
+  if (size == 0) {
+    throw std::invalid_argument("Input vectors cannot be empty.");
+  }
+  // Check for negative time tolerance
+  if (time_tolerance < 0) {
+    throw std::invalid_argument("Time tolerance must be non-negative.");
   }
   // Create the output vectors.
   Eigen::VectorXd tide = Eigen::VectorXd::Zero(size);

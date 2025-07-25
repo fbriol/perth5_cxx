@@ -4,6 +4,7 @@
 #include <nanobind/stl/complex.h>
 #include <nanobind/stl/pair.h>
 #include <nanobind/stl/shared_ptr.h>
+#include <nanobind/stl/unique_ptr.h>
 #include <nanobind/stl/vector.h>
 
 #include "perth/inference.hpp"
@@ -42,8 +43,7 @@ auto bind_tidal_model(nanobind::module_& m, const char* name) -> void {
            "Get the list of constituent identifiers")
       .def("accelerator", &perth::TidalModel<T>::accelerator,
            nb::arg("time_tolerance"),
-           "Create an accelerator for efficient repeated interpolations",
-           nb::rv_policy::take_ownership);
+           "Create an accelerator for efficient repeated interpolations");
 }
 
 auto instantiate_tidal_model(nanobind::module_& m) -> void {
