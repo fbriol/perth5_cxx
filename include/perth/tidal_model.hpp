@@ -128,12 +128,30 @@ class TidalModel : public std::enable_shared_from_this<TidalModel<T>> {
     return new Accelerator(time_tolerance, this->data_.size());
   }
 
-  inline auto add_constituent(const Constituent ident,
-                              Eigen::Vector<std::complex<T>, -1> wave) -> void {
-    if (wave.size() != lon_.size() * lat_.size()) {
-      throw std::invalid_argument("wave size does not match expected size");
+  inline auto add_constituent(
+      const Constituent ident,
+      const Eigen::Ref<
+          const Eigen::Matrix<std::complex<T>, -1, -1, Eigen::RowMajor>>& wave)
+      -> void {
+    auto row_major = wave.rows() == lon_.size() && wave.cols() == lat_.size();
+    if (row_major != row_major_) {
+      throw std::invalid_argument(
+          "The data is not in the expected row-major order.");
     }
-    this->data_.emplace(ident, std::move(wave));
+    if (row_major) {
+      if (wave.rows() != lon_.size() || wave.cols() != lat_.size()) {
+        throw std::invalid_argument(
+            "The data size does not match the axes size.");
+      }
+    } else {
+      if (wave.rows() != lat_.size() || wave.cols() != lon_.size()) {
+        throw std::invalid_argument(
+            "The data size does not match the axes size.");
+      }
+    }
+    this->data_.emplace(ident,
+                        Eigen::Map<const Eigen::Vector<std::complex<T>, -1>>(
+                            wave.data(), wave.size()));
   }
 
   inline auto interpolate(const double lon, const double lat, TideTable& table,
