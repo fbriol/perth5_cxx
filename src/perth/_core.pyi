@@ -1,5 +1,5 @@
 import enum
-from typing import Annotated, Callable, ClassVar, TypeAlias, overload
+from typing import Annotated, TypeAlias, overload
 from collections.abc import Sequence
 from numpy.typing import NDArray
 import numpy
@@ -43,7 +43,6 @@ class Axis:
     ) -> None: ...
 
 class Constituent(enum.Enum):
-    __new__: ClassVar[Callable] = ...
     ALP2 = ...
     BET1 = ...
     BET2 = ...
@@ -117,7 +116,22 @@ class InterpolationType(enum.Enum):
     FOURIER_ADMITTANCE = ...
     LINEAR_ADMITTANCE = ...
 
-class Perth:
+class PerthFloat32:
+    def __init__(
+        self,
+        model: TidalModelFloat32,
+        group_modulations: bool,
+    ) -> None: ...
+    def evaluate(
+        self,
+        lon: VectorFloat64,
+        lat: VectorFloat64,
+        time: VectorFloat64,
+        time_tolerance: float = 0.0,
+        inference: Inference | None = None,
+    ) -> tuple[VectorFloat64, VectorFloat64, VectorInt8]: ...
+
+class PerthFloat64:
     def __init__(
         self,
         model: TidalModelFloat64,
