@@ -100,3 +100,7 @@ venv.bak/
 
 # VSCode stuff
 .vscode/
+
+# Version files generated
+include/perth/version.hpp
+src/perth/version.py
