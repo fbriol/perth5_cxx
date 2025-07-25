@@ -1,6 +1,7 @@
 #include "constituent.hpp"
 
 #include <nanobind/stl/optional.h>
+#include <nanobind/stl/vector.h>
 
 #include "perth/constituent.hpp"
 
@@ -28,7 +29,7 @@ auto instantiate_constituent(nanobind::module_ &m) -> void {
       .value("MT", perth::Constituent::kMt, "Mt")
       .value("MSQ", perth::Constituent::kMSq, "MSq")
       .value("MQ", perth::Constituent::kMq, "Mq")
-      .value("2Q1", perth::Constituent::k2Q1, "2Q1")
+      .value("_2Q1", perth::Constituent::k2Q1, "2Q1")
       .value("SIG1", perth::Constituent::kSig1, "Sig1")
       .value("Q1", perth::Constituent::kQ1, "Q1")
       .value("RHO1", perth::Constituent::kRho1, "Rho1")
@@ -49,7 +50,7 @@ auto instantiate_constituent(nanobind::module_ &m) -> void {
       .value("OO1", perth::Constituent::kOO1, "OO1")
       .value("UPS1", perth::Constituent::kUps1, "Ups1")
       .value("EPS2", perth::Constituent::kEps2, "Eps2")
-      .value("2N2", perth::Constituent::k2N2, "2N2")
+      .value("_2N2", perth::Constituent::k2N2, "2N2")
       .value("MU2", perth::Constituent::kMu2, "Mu2")
       .value("N2", perth::Constituent::kN2, "N2")
       .value("NU2", perth::Constituent::kNu2, "Nu2")

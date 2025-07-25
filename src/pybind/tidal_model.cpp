@@ -11,9 +11,8 @@ namespace nb = nanobind;
 template <typename T>
 auto bind_tidal_model(nanobind::module_& m, const char* name) -> void {
   nb::class_<perth::TidalModel<T>>(m, name)
-      .def(nb::init<perth::Axis, perth::Axis, perth::TideType, bool>(),
-           nb::arg("lon"), nb::arg("lat"), nb::arg("tide_type"),
-           nb::arg("row_major") = true,
+      .def(nb::init<perth::Axis, perth::Axis, bool>(), nb::arg("lon"),
+           nb::arg("lat"), nb::arg("row_major") = true,
            "Initialize a tidal model with longitude and latitude axes")
       .def("add_constituent", &perth::TidalModel<T>::add_constituent,
            nb::arg("constituent"), nb::arg("wave"),
@@ -30,8 +29,6 @@ auto bind_tidal_model(nanobind::module_& m, const char* name) -> void {
            "Get the number of tidal constituents in the model")
       .def("identifiers", &perth::TidalModel<T>::identifiers,
            "Get the list of constituent identifiers")
-      .def("tide_type", &perth::TidalModel<T>::tide_type,
-           "Get the tide type handled by the model")
       .def("accelerator", &perth::TidalModel<T>::accelerator,
            nb::arg("time_tolerance"),
            "Create an accelerator for efficient repeated interpolations",
@@ -50,10 +47,6 @@ auto instantiate_tidal_model(nanobind::module_& m) -> void {
       .value("EXTRAPOLATED_2", perth::Quality::kExtrapolated2)
       .value("EXTRAPOLATED_3", perth::Quality::kExtrapolated3)
       .value("INTERPOLATED", perth::Quality::kInterpolated);
-
-  nb::enum_<perth::TideType>(m, "TideType")
-      .value("TIDE", perth::TideType::kTide)
-      .value("RADIAL", perth::TideType::kRadial);
 
   // Bind the Accelerator class
   nb::class_<perth::Accelerator>(m, "Accelerator");

@@ -27,12 +27,6 @@ enum Quality : uint8_t {
   kUndefined = 0,      //!< Value undefined
 };
 
-/// @brief Possible tide types
-enum TideType : uint8_t {
-  kTide = 0x01,    //!< Ocean Tide
-  kRadial = 0x02,  //!< Radial tide
-};
-
 /// @brief Constituent values type
 using ConstituentValues =
     std::vector<std::pair<Constituent, std::complex<double>>>;
@@ -115,13 +109,11 @@ class Accelerator {
 template <typename T>
 class TidalModel : public std::enable_shared_from_this<TidalModel<T>> {
  public:
-  TidalModel(Axis lon, Axis lat, const TideType tide_type,
-             const bool row_major = true)
+  TidalModel(Axis lon, Axis lat, const bool row_major = true)
       : data_(),
         lon_(std::move(lon)),
         lat_(std::move(lat)),
-        row_major_(row_major),
-        tide_type_(tide_type) {}
+        row_major_(row_major) {}
 
   constexpr auto accelerator(const double time_tolerance) const
       -> Accelerator* {
@@ -179,9 +171,6 @@ class TidalModel : public std::enable_shared_from_this<TidalModel<T>> {
     return result;
   }
 
-  /// Get the tide type handled by the model.
-  constexpr auto tide_type() const -> TideType { return tide_type_; }
-
  private:
   /// The constituents of the tidal model.
   std::unordered_map<Constituent, Eigen::Vector<std::complex<T>, -1>> data_;
@@ -191,8 +180,6 @@ class TidalModel : public std::enable_shared_from_this<TidalModel<T>> {
   Axis lat_;
   /// Whether the data is stored in longitude-major order.
   bool row_major_;
-  /// Tide type
-  TideType tide_type_;
 
   auto interpolate(const double lon, const double lat, Quality& quality,
                    Accelerator* acc) const -> const ConstituentValues&;
