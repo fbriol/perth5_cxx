@@ -1,6 +1,8 @@
 #include "tidal_model.hpp"
 
 #include <nanobind/eigen/dense.h>
+#include <nanobind/stl/complex.h>
+#include <nanobind/stl/pair.h>
 #include <nanobind/stl/shared_ptr.h>
 #include <nanobind/stl/vector.h>
 
@@ -22,9 +24,10 @@ auto bind_tidal_model(nanobind::module_& m, const char* name) -> void {
           [](const perth::TidalModel<T>& self, const double lon,
              const double lat, perth::TideTable& table,
              perth::Accelerator& acc) {
-            if (table.size() != self.size()) {
+            if (self.size() != acc.size()) {
               throw std::invalid_argument(
-                  "TideTable size must match the number of constituents");
+                  "The size of the tidal model does not match the "
+                  "accelerator.");
             }
             return self.interpolate(lon, lat, table, &acc);
           },

@@ -57,6 +57,12 @@ class Accelerator {
   constexpr auto y1() const noexcept -> double { return y1_; }
   constexpr auto y2() const noexcept -> double { return y2_; }
 
+  constexpr auto time_tolerance() const noexcept -> double {
+    return time_tolerance_;
+  }
+
+  constexpr auto size() const noexcept -> size_t { return values_.capacity(); }
+
   /// @brief Returns the tidal constituent values interpolated at the given
   /// point.
   /// @return the tidal constituent values interpolated at the given point.
