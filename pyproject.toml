@@ -91,8 +91,6 @@ skip-magic-trailing-comma = false
 line-ending = "auto"
 
 [tool.pytest.ini_options]
-junit_suite_name = "PyBind"
-junit_family = "xunit1"
 minversion = "3.0"
 norecursedirs = "third_party"
 testpaths = "tests"

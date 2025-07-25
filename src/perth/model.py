@@ -194,12 +194,12 @@ def _create_tidal_model(
 ) -> _core.TidalModelFloat32 | _core.TidalModelFloat64:
     """Create the appropriate tidal model based on the data type."""
     x_axis = _core.Axis(
-        metadata.x_axis,
+        numpy.ma.filled(metadata.x_axis, fill_value=numpy.nan),
         epsilon=1e-6,
         is_periodic=True,
     )
     y_axis = _core.Axis(
-        metadata.y_axis,
+        numpy.ma.filled(metadata.y_axis, fill_value=numpy.nan),
         epsilon=1e-6,
     )
     if dtype == numpy.float32:
@@ -225,8 +225,14 @@ def _process_constituent_data(
     dataset: netCDF4.Dataset, var_names: VariableNames, metadata: ModelMetadata
 ) -> numpy.ndarray:
     """Process amplitude and phase data for a single constituent."""
-    amp_raw = dataset.variables[var_names.amplitude][:]
-    ph_raw = dataset.variables[var_names.phase][:]
+    amp_raw = numpy.ma.filled(
+        dataset.variables[var_names.amplitude][:],
+        fill_value=numpy.nan,
+    )
+    ph_raw = numpy.ma.filled(
+        dataset.variables[var_names.phase][:],
+        fill_value=numpy.nan,
+    )
 
     # Apply unit conversions
     amp = _convert_to_meters(amp_raw, metadata.amplitude_units)
