@@ -103,15 +103,15 @@ auto Perth<T>::evaluate(
   auto size = lon.size();
   // Check that the input vectors have the same size.
   if (size != lat.size() || size != time.size()) {
-    throw std::invalid_argument("Input vectors must have the same size.");
+    throw std::invalid_argument("Input vectors must have the same size");
   }
   // Check for empty input
   if (size == 0) {
-    throw std::invalid_argument("Input vectors cannot be empty.");
+    throw std::invalid_argument("Input vectors cannot be empty");
   }
   // Check for negative time tolerance
   if (time_tolerance < 0) {
-    throw std::invalid_argument("Time tolerance must be non-negative.");
+    throw std::invalid_argument("Time tolerance must be non-negative");
   }
   // Create the output vectors.
   Eigen::VectorXd tide = Eigen::VectorXd::Zero(size);

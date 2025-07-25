@@ -17,7 +17,7 @@ auto Axis::normalize_longitude(const Eigen::VectorXd &points)
   }
 
   if (!monotonic) {
-    auto result = Eigen::VectorXd(points);
+    auto result = points;
     auto cross = false;
 
     auto *it_current = result.data() + 1;
@@ -111,7 +111,7 @@ auto Axis::find_indices(double coordinate) const
   auto i1 = i0;
   if (delta == 0) {
     // The requested coordinate is located on an element of the axis.
-    i1 == length - 1 ? --i0 : ++i1;
+    (i1 == length - 1) ? --i0 : ++i1;
   } else {
     if (delta < 0) {
       // The found point is located after the coordinate provided.
