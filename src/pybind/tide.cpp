@@ -2,6 +2,7 @@
 
 #include <nanobind/eigen/dense.h>
 #include <nanobind/nanobind.h>
+#include <nanobind/stl/optional.h>
 #include <nanobind/stl/shared_ptr.h>
 #include <nanobind/stl/tuple.h>
 
@@ -17,9 +18,11 @@ auto bind_perth(nanobind::module_& m, const char* name) -> void {
            "Initialize Tide with a tidal model and optional group modulations")
       .def("evaluate", &perth::Perth<T>::evaluate, nb::arg("lon"),
            nb::arg("lat"), nb::arg("time"), nb::arg("time_tolerance") = 0.0,
-           nb::arg("inference") = nullptr,
+           nb::arg("interpolation_type") = std::nullopt,
            "Evaluate tidal values at a given longitude, latitude, and time",
-           nb::call_guard<nb::gil_scoped_release>());
+           nb::call_guard<nb::gil_scoped_release>())
+      .def_prop_ro("tidal_model", &perth::Perth<T>::tidal_model,
+                   "Get the tidal model associated with this Perth instance");
 }
 
 auto instantiate_tide(nanobind::module_& m) -> void {

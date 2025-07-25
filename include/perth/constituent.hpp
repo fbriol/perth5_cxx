@@ -3,6 +3,7 @@
 #include <Eigen/Core>
 #include <array>
 #include <cstdint>
+#include <optional>
 #include <vector>
 
 #include "perth/eigen.hpp"
@@ -93,8 +94,11 @@ class ConstituentArray {
   using Item = std::array<T, kNumConstituentItems>;
 
   constexpr ConstituentArray() noexcept = default;
+
   constexpr ConstituentArray(Key &&keys, Item &&items) noexcept
-      : keys_(std::move(keys)), items_(std::move(items)) {}
+      : keys_(std::move(keys)),
+        items_(std::move(items)),
+        keys_vector_(keys_.begin(), keys_.end()) {}
 
   constexpr auto operator[](Constituent constituent) const noexcept
       -> const T & {
@@ -115,8 +119,8 @@ class ConstituentArray {
 
   constexpr auto items() noexcept -> Item & { return items_; }
 
-  inline auto retrieve_keys_as_vector() const -> std::vector<Constituent> {
-    return std::vector<Constituent>(keys_.begin(), keys_.end());
+  constexpr auto keys_vector() const -> const std::vector<Constituent> & {
+    return keys_vector_;
   }
 
   constexpr auto at(const size_t index) const
@@ -130,6 +134,7 @@ class ConstituentArray {
  private:
   Key keys_{};
   Item items_{};
+  std::vector<Constituent> keys_vector_;
 };
 
 using TideTable = ConstituentArray<TideComponent>;

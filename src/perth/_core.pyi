@@ -4,10 +4,11 @@ from collections.abc import Sequence
 from numpy.typing import NDArray
 import numpy
 
-MatrixComplex64: TypeAlias = Annotated[NDArray[numpy.complex64], '[m, n]']
-MatrixComplex128: TypeAlias = Annotated[NDArray[numpy.complex128], '[m, n]']
-VectorFloat64: TypeAlias = Annotated[NDArray[numpy.float64], '[m, 1]']
-VectorInt8: TypeAlias = Annotated[NDArray[numpy.int8], '[m, 1]']
+MatrixComplex64: TypeAlias = Annotated[NDArray[numpy.complex64], "[m, n]"]
+MatrixComplex128: TypeAlias = Annotated[NDArray[numpy.complex128], "[m, n]"]
+VectorFloat64: TypeAlias = Annotated[NDArray[numpy.float64], "[m, 1]"]
+VectorInt64: TypeAlias = Annotated[NDArray[numpy.int64], "[m, 1]"]
+VectorInt8: TypeAlias = Annotated[NDArray[numpy.int8], "[m, 1]"]
 
 def make_tide_table(
     constituents: Sequence[Constituent] | None = None,
@@ -104,13 +105,8 @@ class Inference:
         self,
         tide_table: TideTable,
         interpolation_type: InterpolationType,
-        input_type: InputType,
     ) -> None: ...
     def __call__(self, hc: TideTable, lat: float = ...) -> None: ...
-
-class InputType(enum.Enum):
-    AMPLITUDE = ...
-    HORMONIC = ...
 
 class InterpolationType(enum.Enum):
     FOURIER_ADMITTANCE = ...
@@ -126,10 +122,12 @@ class PerthFloat32:
         self,
         lon: VectorFloat64,
         lat: VectorFloat64,
-        time: VectorFloat64,
+        time: VectorInt64,
         time_tolerance: float = 0.0,
-        inference: Inference | None = None,
+        interpolation_type: InterpolationType | None = None,
     ) -> tuple[VectorFloat64, VectorFloat64, VectorInt8]: ...
+    @property
+    def tidal_model(self) -> TidalModelFloat32: ...
 
 class PerthFloat64:
     def __init__(
@@ -141,10 +139,12 @@ class PerthFloat64:
         self,
         lon: VectorFloat64,
         lat: VectorFloat64,
-        time: VectorFloat64,
+        time: VectorInt64,
         time_tolerance: float = 0.0,
-        inference: Inference | None = None,
+        interpolation_type: InterpolationType | None = None,
     ) -> tuple[VectorFloat64, VectorFloat64, VectorInt8]: ...
+    @property
+    def tidal_model(self) -> TidalModelFloat64: ...
 
 class Quality(enum.Enum):
     EXTRAPOLATED_1 = ...
@@ -154,7 +154,9 @@ class Quality(enum.Enum):
     UNDEFINED = ...
 
 class TidalModelFloat32:
-    def __init__(self, lon: Axis, lat: Axis, row_major: bool = ...) -> None: ...
+    def __init__(
+        self, lon: Axis, lat: Axis, row_major: bool = ...
+    ) -> None: ...
     def accelerator(self, time_tolerance: float) -> Accelerator: ...
     def add_constituent(
         self,
@@ -166,11 +168,12 @@ class TidalModelFloat32:
     def interpolate(
         self, lon: float, lat: float, table: TideTable, acc: Accelerator
     ) -> Quality: ...
-    def shared_from_this(self) -> TidalModelFloat32: ...
     def size(self) -> int: ...
 
 class TidalModelFloat64:
-    def __init__(self, lon: Axis, lat: Axis, row_major: bool = ...) -> None: ...
+    def __init__(
+        self, lon: Axis, lat: Axis, row_major: bool = ...
+    ) -> None: ...
     def accelerator(self, time_tolerance: float) -> Accelerator: ...
     def add_constituent(
         self,
@@ -186,7 +189,6 @@ class TidalModelFloat64:
         table: TideTable,
         acc: Accelerator,
     ) -> Quality: ...
-    def shared_from_this(self) -> TidalModelFloat64: ...
     def size(self) -> int: ...
 
 class TideTable: ...

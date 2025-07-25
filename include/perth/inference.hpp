@@ -14,17 +14,11 @@ enum class InterpolationType {
   kFourierAdmittance,  ///< Munk-Cartwright Fourier series interpolation.
 };
 
-enum class InputType {
-  kHormonic,  ///<  harmonic constants are inphase/quadrature components.
-  kAmplitude  ///< constants are amplitudes, phase lags (deg).
-};
-
 class Inference {
  public:
   Inference(const TideTable& components,
             const InterpolationType interpolation_type =
-                InterpolationType::kLinearAdmittance,
-            const InputType input_type = InputType::kHormonic);
+                InterpolationType::kLinearAdmittance);
 
   auto operator()(TideTable& hc, const double lat = 0) const -> void;
 
@@ -68,25 +62,25 @@ class Inference {
                                                ///< constituents ordered by
                                                ///< frequency.
 
-  double x1_;             ///< Frequency for the first component.
-  double x2_;             ///< Frequency for the second component.
-  double x3_;             ///< Frequency for the third component.
-  double x4_;             ///< Frequency for the first component (semidurnal).
-  double x5_;             ///< Frequency for the second component (semidurnal).
-  double x6_;             ///< Frequency for the third component (semidurnal).
-  double x7_;             ///< Frequency for the first component (long-period).
-  double x8_;             ///< Frequency for the second component (long-period).
-  double x9_;             ///< Frequency for the third component (long-period).
-  double amp1_;           ///< Amplitude for the first component.
-  double amp2_;           ///< Amplitude for the second component.
-  double amp3_;           ///< Amplitude for the third component.
-  double amp4_;           ///< Amplitude for the first component (semidurnal).
-  double amp5_;           ///< Amplitude for the second component (semidurnal).
-  double amp6_;           ///< Amplitude for the third component (semidurnal).
-  double amp7_;           ///< Amplitude for the first component (long-period).
-  double amp8_;           ///< Amplitude for the second component (long-period).
-  double amp9_;           ///< Amplitude for the third component (long-period).
-  InputType input_type_;  ///< Type of input data (harmonic or amplitude).
+  double x1_;    ///< Frequency for the first component.
+  double x2_;    ///< Frequency for the second component.
+  double x3_;    ///< Frequency for the third component.
+  double x4_;    ///< Frequency for the first component (semidurnal).
+  double x5_;    ///< Frequency for the second component (semidurnal).
+  double x6_;    ///< Frequency for the third component (semidurnal).
+  double x7_;    ///< Frequency for the first component (long-period).
+  double x8_;    ///< Frequency for the second component (long-period).
+  double x9_;    ///< Frequency for the third component (long-period).
+  double amp1_;  ///< Amplitude for the first component.
+  double amp2_;  ///< Amplitude for the second component.
+  double amp3_;  ///< Amplitude for the third component.
+  double amp4_;  ///< Amplitude for the first component (semidurnal).
+  double amp5_;  ///< Amplitude for the second component (semidurnal).
+  double amp6_;  ///< Amplitude for the third component (semidurnal).
+  double amp7_;  ///< Amplitude for the first component (long-period).
+  double amp8_;  ///< Amplitude for the second component (long-period).
+  double amp9_;  ///< Amplitude for the third component (long-period).
+
   std::function<Complex(double, const Complex&, double, const Complex&, double,
                         const Complex&,
                         double)>

@@ -3,14 +3,14 @@
 namespace perth {
 
 auto Accelerator::update_args(const double time, const double group_modulations,
-                              const std::vector<Constituent>& constituents,
                               TideTable& table) -> void {
+  constexpr double modified_julian_epoch = 2400000.5;  // MJD epoch in seconds
   if (std::abs(time - time_) < time_tolerance_) {
     return;
   }
 
   time_ = time;
-  delta_ = calculate_delta_time(time);
+  delta_ = calculate_delta_time(time + modified_julian_epoch);
 
   auto args = calculate_celestial_vector(time, delta_);
   const auto perigee = args(3);
@@ -19,10 +19,10 @@ auto Accelerator::update_args(const double time, const double group_modulations,
     const auto hsolar = args(2);
     const auto psolar = args(5);
     nodal_corrections_ = std::move(compute_nodal_corrections(
-        psolar, omega, perigee, hsolar, constituents));
+        psolar, omega, perigee, hsolar, table.keys_vector()));
   } else {
-    nodal_corrections_ =
-        std::move(compute_nodal_corrections(omega, perigee, constituents));
+    nodal_corrections_ = std::move(
+        compute_nodal_corrections(omega, perigee, table.keys_vector()));
   }
   for (auto& key : table.keys()) {
     auto& component = table[key];

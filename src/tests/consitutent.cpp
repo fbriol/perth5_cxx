@@ -124,7 +124,7 @@ TYPED_TEST(ConstituentArrayTest, Items) {
   }
 }
 
-// Test retrieve_keys_as_vector method
+// Test keys_vector method
 TYPED_TEST(ConstituentArrayTest, RetrieveKeysAsVector) {
   typename TestFixture::TestArray::Key test_keys;
   typename TestFixture::TestArray::Item test_items;
@@ -137,7 +137,7 @@ TYPED_TEST(ConstituentArrayTest, RetrieveKeysAsVector) {
   typename TestFixture::TestArray array(std::move(test_keys),
                                         std::move(test_items));
 
-  auto keys_vector = array.retrieve_keys_as_vector();
+  auto keys_vector = array.keys_vector();
   EXPECT_EQ(keys_vector.size(), kNumConstituentItems);
 
   for (std::size_t i = 0; i < kNumConstituentItems; ++i) {
@@ -170,7 +170,7 @@ TEST_F(TideTableTest, TableSize) {
 }
 
 TEST_F(TideTableTest, AllConstituentsPresent) {
-  auto keys_vector = table.retrieve_keys_as_vector();
+  auto keys_vector = table.keys_vector();
 
   // Check that all constituent values from 0 to kNumConstituents-1 are present
   std::vector<bool> found(kNumConstituentItems, false);

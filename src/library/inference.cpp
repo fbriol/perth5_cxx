@@ -153,9 +153,7 @@ auto populate_and_sort_inferred(
 }
 
 Inference::Inference(const TideTable& components,
-                     const InterpolationType interpolation_type,
-                     const InputType input_type)
-    : input_type_(input_type) {
+                     const InterpolationType interpolation_type) {
   populate_and_sort_inferred(inferred_diurnal_, diurnal_keys_,
                              kInferredDiurnalConstituents_, components);
   populate_and_sort_inferred(inferred_semidiurnal_, semidiurnal_keys_,
@@ -210,14 +208,6 @@ Inference::Inference(const TideTable& components,
 }
 
 auto Inference::operator()(TideTable& hc, const double lat) const -> void {
-  // If needed, convert amp, phase to inphase, quad...
-  if (input_type_ == InputType::kAmplitude) {
-    for (auto& item : hc.items()) {
-      auto& tide = item.tide;
-      auto tmp = radians(tide.imag());
-      tide = Complex(tide.real() * std::cos(tmp), tide.real() * std::sin(tmp));
-    }
-  }
   auto y1 = hc[Constituent::kQ1].tide / amp1_;
   auto y2 = hc[Constituent::kO1].tide / amp2_;
   auto y3 = hc[Constituent::kK1].tide / amp3_;
@@ -261,16 +251,6 @@ auto Inference::operator()(TideTable& hc, const double lat) const -> void {
     auto y =
         linear_interpolation(x7_, y7, x8_, y8, x9_, y9, inferred_item.first);
     updated_item.tide = y * inferred_item.second;
-  }
-
-  // If needed, convert back to amp, phase...
-  if (input_type_ == InputType::kAmplitude) {
-    for (auto& item : hc.items()) {
-      auto& tide = item.tide;
-      auto amp = std::abs(tide);
-      auto phase = std::arg(tide);
-      tide = Complex(amp, degrees(phase));
-    }
   }
 }
 

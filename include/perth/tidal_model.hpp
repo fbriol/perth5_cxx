@@ -13,6 +13,7 @@
 #include "perth/delta_t.hpp"
 #include "perth/doodson.hpp"
 #include "perth/grid.hpp"
+#include "perth/inference.hpp"
 #include "perth/math.hpp"
 #include "perth/nodal_corrections.hpp"
 
@@ -86,7 +87,6 @@ class Accelerator {
   }
 
   auto update_args(const double time, const double group_modulations,
-                   const std::vector<Constituent>& constituents,
                    TideTable& table) -> void;
 
  private:

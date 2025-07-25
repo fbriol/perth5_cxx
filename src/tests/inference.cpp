@@ -33,38 +33,21 @@ class InferenceTest : public ::testing::Test {
 };
 
 // Test constructor with different parameter combinations
-TEST_F(InferenceTest, ConstructorLinearHarmonicMinor) {
+TEST_F(InferenceTest, ConstructorLinear) {
   EXPECT_NO_THROW({
-    Inference inference(tide_table_, InterpolationType::kLinearAdmittance,
-                        InputType::kHormonic);
+    Inference inference(tide_table_, InterpolationType::kLinearAdmittance);
   });
 }
 
-TEST_F(InferenceTest, ConstructorFourierHarmonicMinor) {
+TEST_F(InferenceTest, ConstructorFourier) {
   EXPECT_NO_THROW({
-    Inference inference(tide_table_, InterpolationType::kFourierAdmittance,
-                        InputType::kHormonic);
+    Inference inference(tide_table_, InterpolationType::kFourierAdmittance);
   });
 }
 
-TEST_F(InferenceTest, ConstructorLinearAmplitudeMinor) {
-  EXPECT_NO_THROW({
-    Inference inference(tide_table_, InterpolationType::kLinearAdmittance,
-                        InputType::kAmplitude);
-  });
-}
-
-TEST_F(InferenceTest, ConstructorLinearHarmonicLongPeriod) {
-  EXPECT_NO_THROW({
-    Inference inference(tide_table_, InterpolationType::kLinearAdmittance,
-                        InputType::kHormonic);
-  });
-}
-
-// Test operator() with harmonic input and minor constituents
-TEST_F(InferenceTest, OperatorHarmonicMinor) {
-  Inference inference(tide_table_, InterpolationType::kLinearAdmittance,
-                      InputType::kHormonic);
+// Test operator() with minor constituents
+TEST_F(InferenceTest, OperatorMinor) {
+  Inference inference(tide_table_, InterpolationType::kLinearAdmittance);
 
   // Store original values for comparison
   TideTable original_table = tide_table_;
@@ -89,43 +72,9 @@ TEST_F(InferenceTest, OperatorHarmonicMinor) {
   EXPECT_GT(std::abs(tide_table_[Constituent::kK1].tide), 0.0);
 }
 
-// Test operator() with amplitude input and minor constituents
-TEST_F(InferenceTest, OperatorAmplitudeMinor) {
-  // Set up amplitude/phase data (amplitude, phase in degrees)
-  tide_table_[Constituent::kQ1].tide =
-      Complex(0.1, 30.0);  // amp=0.1, phase=30°
-  tide_table_[Constituent::kO1].tide =
-      Complex(0.5, 45.0);  // amp=0.5, phase=45°
-  tide_table_[Constituent::kK1].tide =
-      Complex(0.8, 60.0);  // amp=0.8, phase=60°
-  tide_table_[Constituent::kN2].tide =
-      Complex(0.3, 15.0);  // amp=0.3, phase=15°
-  tide_table_[Constituent::kM2].tide =
-      Complex(1.0, 90.0);  // amp=1.0, phase=90°
-  tide_table_[Constituent::kS2].tide =
-      Complex(0.6, 120.0);  // amp=0.6, phase=120°
-
-  Inference inference(tide_table_, InterpolationType::kLinearAdmittance,
-                      InputType::kAmplitude);
-
-  // Apply inference
-  inference(tide_table_);
-
-  // After processing, data should be back in amplitude/phase format
-  // Check that primary constituents have reasonable amplitudes
-  EXPECT_GT(std::abs(tide_table_[Constituent::kQ1].tide), 0.0);
-  EXPECT_GT(std::abs(tide_table_[Constituent::kO1].tide), 0.0);
-  EXPECT_GT(std::abs(tide_table_[Constituent::kK1].tide), 0.0);
-
-  // Check that some minor constituents have been calculated
-  EXPECT_GT(std::abs(tide_table_[Constituent::kRho1].tide), 0.0);
-  EXPECT_GT(std::abs(tide_table_[Constituent::kTau1].tide), 0.0);
-}
-
 // Test operator() with long period constituents
 TEST_F(InferenceTest, OperatorLongPeriod) {
-  Inference inference(tide_table_, InterpolationType::kLinearAdmittance,
-                      InputType::kHormonic);
+  Inference inference(tide_table_, InterpolationType::kLinearAdmittance);
 
   // Apply inference
   inference(tide_table_);
@@ -138,8 +87,7 @@ TEST_F(InferenceTest, OperatorLongPeriod) {
 
 // Test with Fourier interpolation
 TEST_F(InferenceTest, FourierInterpolation) {
-  Inference inference(tide_table_, InterpolationType::kFourierAdmittance,
-                      InputType::kHormonic);
+  Inference inference(tide_table_, InterpolationType::kFourierAdmittance);
 
   // Store original values
   TideTable original_table = tide_table_;
@@ -156,8 +104,7 @@ TEST_F(InferenceTest, FourierInterpolation) {
 
 // Test that inference produces reasonable magnitude relationships
 TEST_F(InferenceTest, ReasonableMagnitudes) {
-  Inference inference(tide_table_, InterpolationType::kLinearAdmittance,
-                      InputType::kHormonic);
+  Inference inference(tide_table_, InterpolationType::kLinearAdmittance);
 
   // Apply inference
   inference(tide_table_);
@@ -186,8 +133,7 @@ TEST_F(InferenceTest, ZeroInputValues) {
   // Set all values to zero
   TideTable zero_table = make_tide_table();
 
-  Inference inference(tide_table_, InterpolationType::kLinearAdmittance,
-                      InputType::kHormonic);
+  Inference inference(tide_table_, InterpolationType::kLinearAdmittance);
 
   // Apply inference
   inference(zero_table);
@@ -205,11 +151,10 @@ TEST_F(InferenceTest, InterpolationConsistency) {
   TideTable linear_table = tide_table_;
   TideTable fourier_table = tide_table_;
 
-  Inference linear_inference(tide_table_, InterpolationType::kLinearAdmittance,
-                             InputType::kHormonic);
+  Inference linear_inference(tide_table_, InterpolationType::kLinearAdmittance);
 
-  Inference fourier_inference(
-      tide_table_, InterpolationType::kFourierAdmittance, InputType::kHormonic);
+  Inference fourier_inference(tide_table_,
+                              InterpolationType::kFourierAdmittance);
 
   linear_inference(linear_table);
   fourier_inference(fourier_table);
@@ -231,56 +176,9 @@ TEST_F(InferenceTest, InterpolationConsistency) {
   }
 }
 
-// Test amplitude/phase conversion and inference process
-TEST_F(InferenceTest, AmplitudePhaseRoundtrip) {
-  // Set up known amplitude/phase values
-  double expected_amp = 0.5;
-  double expected_phase = 30.0;  // degrees
-
-  tide_table_[Constituent::kO1].tide = Complex(expected_amp, expected_phase);
-  tide_table_[Constituent::kK1].tide = Complex(0.8, 45.0);
-  tide_table_[Constituent::kQ1].tide = Complex(0.2, 15.0);
-  tide_table_[Constituent::kM2].tide = Complex(1.0, 90.0);
-  tide_table_[Constituent::kN2].tide = Complex(0.3, 60.0);
-  tide_table_[Constituent::kS2].tide = Complex(0.6, 120.0);
-
-  Inference inference(tide_table_, InterpolationType::kLinearAdmittance,
-                      InputType::kAmplitude);
-
-  inference(tide_table_);
-
-  // After processing, the data should be back in amplitude/phase format
-  // The values will have been processed through the inference algorithm,
-  // so we can't expect them to remain exactly the same.
-  // Instead, let's verify the format is correct (amplitude should be positive)
-  double result_amp = tide_table_[Constituent::kO1].tide.real();
-  double result_phase = tide_table_[Constituent::kO1].tide.imag();
-
-  EXPECT_GT(result_amp, 0.0);       // Amplitude should be positive
-  EXPECT_GE(result_phase, -360.0);  // Phase should be in reasonable range
-  EXPECT_LE(result_phase, 360.0);
-
-  // Check that other constituents also have reasonable amplitude/phase format
-  EXPECT_GT(tide_table_[Constituent::kK1].tide.real(), 0.0);
-  EXPECT_GT(tide_table_[Constituent::kM2].tide.real(), 0.0);
-}
-
-// Test invalid interpolation type behavior (if there were one)
-TEST_F(InferenceTest, ValidInputTypes) {
-  // Test all valid enum combinations
-  EXPECT_NO_THROW({
-    Inference inference1(tide_table_, InterpolationType::kLinearAdmittance,
-                         InputType::kHormonic);
-
-    Inference inference2(tide_table_, InterpolationType::kFourierAdmittance,
-                         InputType::kAmplitude);
-  });
-}
-
 // Test that inference preserves complex number structure
 TEST_F(InferenceTest, ComplexNumberStructure) {
-  Inference inference(tide_table_, InterpolationType::kLinearAdmittance,
-                      InputType::kHormonic);
+  Inference inference(tide_table_, InterpolationType::kLinearAdmittance);
 
   // Set up complex input values
   tide_table_[Constituent::kO1].tide = Complex(0.5, 0.3);
@@ -305,8 +203,7 @@ TEST_F(InferenceTest, ComplexNumberStructure) {
 
 // Test that inference works with different scales of input
 TEST_F(InferenceTest, DifferentInputScales) {
-  Inference inference(tide_table_, InterpolationType::kLinearAdmittance,
-                      InputType::kHormonic);
+  Inference inference(tide_table_, InterpolationType::kLinearAdmittance);
 
   // Test with very small values
   TideTable small_table = make_tide_table();
@@ -333,8 +230,7 @@ TEST_F(InferenceTest, DifferentInputScales) {
 
 // Test interpolation consistency across frequency ranges
 TEST_F(InferenceTest, FrequencyRangeConsistency) {
-  Inference linear_inference(tide_table_, InterpolationType::kLinearAdmittance,
-                             InputType::kHormonic);
+  Inference linear_inference(tide_table_, InterpolationType::kLinearAdmittance);
 
   TideTable test_table = tide_table_;
   linear_inference(test_table);
@@ -367,8 +263,7 @@ TEST(InferenceOceanTide, RealCase) {
       make_tide_table({kQ1, kO1, kP1, kS1, kK1, kN2, kM2, kS2, kK2, kM4, kMS4,
                        k2N2, kMu2, kJ1, kSig1, kOO1});
 
-  auto inference = Inference(tide_table, InterpolationType::kLinearAdmittance,
-                             InputType::kHormonic);
+  auto inference = Inference(tide_table, InterpolationType::kLinearAdmittance);
 
   tide_table[kQ1].tide = Complex(2.044581413269043, -2.3776917457580566);
   tide_table[kQ1].is_inferred = false;
