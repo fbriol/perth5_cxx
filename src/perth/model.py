@@ -1,4 +1,5 @@
 from collections.abc import Callable
+import os
 from typing import NamedTuple
 import netCDF4
 import numpy
@@ -307,6 +308,11 @@ def load_model(
     dtype: numpy.dtype | None = None
 
     for constituent, path in files.items():
+        if not os.path.exists(path):
+            raise FileNotFoundError(
+                f"File for constituent {constituent.name} not found: {path}"
+            )
+
         with netCDF4.Dataset(path, "r") as dataset:
             _validate_required_variables(
                 dataset,
