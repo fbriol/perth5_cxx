@@ -5,6 +5,8 @@
 #include <cmath>
 #include <stdexcept>
 
+#include "perth/datetime.hpp"
+
 namespace perth {
 
 // Test fixture for delta_t tests
@@ -30,7 +32,7 @@ class DeltaTTest : public ::testing::Test {
 
   // Helper function to convert year to Julian date
   constexpr double year_to_julian_date(int year) {
-    return year_to_modified_julian_date(year) + 2400000.5;
+    return year_to_modified_julian_date(year) + kModifiedJulianEpoch;
   }
 
   // Tolerance for floating point comparisons

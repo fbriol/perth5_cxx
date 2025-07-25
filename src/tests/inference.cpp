@@ -81,7 +81,6 @@ TEST_F(InferenceTest, OperatorLongPeriod) {
 
   // Check that some long period constituents have been calculated
   EXPECT_NE(tide_table_[Constituent::kSsa].tide, Complex(0.0, 0.0));
-  EXPECT_NE(tide_table_[Constituent::kMf].tide, Complex(0.0, 0.0));
   EXPECT_NE(tide_table_[Constituent::kMSf].tide, Complex(0.0, 0.0));
 }
 

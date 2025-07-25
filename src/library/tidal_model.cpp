@@ -1,16 +1,17 @@
 #include "perth/tidal_model.hpp"
 
+#include "perth/datetime.hpp"
+
 namespace perth {
 
 auto Accelerator::update_args(const double time, const double group_modulations,
                               TideTable& table) -> void {
-  constexpr double modified_julian_epoch = 2400000.5;  // MJD epoch in seconds
   if (std::abs(time - time_) < time_tolerance_) {
     return;
   }
 
   time_ = time;
-  delta_ = calculate_delta_time(time + modified_julian_epoch);
+  delta_ = calculate_delta_time(time + kModifiedJulianEpoch);
 
   auto args = calculate_celestial_vector(time, delta_);
   const auto perigee = args(3);

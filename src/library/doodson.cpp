@@ -1,15 +1,20 @@
+
 #include "perth/doodson.hpp"
+
+#include "perth/datetime.hpp"
 
 namespace perth {
 auto calculate_celestial_vector(double time, double delta) noexcept
     -> Vector6d {
   {
     // Terrestrial Time
-    auto time_tt = time + delta / 86400.0;
+    auto time_tt = time + delta / static_cast<double>(kSecondsPerDay);
 
     // Julian Day since J2000
-    auto tjd = time_tt + 2400000.5;
-    auto tx = (tjd - 2451545.0) / 36525.0;  // TT since J2000, in centuries
+    auto tjd = time_tt + kModifiedJulianEpoch;
+    // TT since J2000, in centuries
+    auto tx = (tjd - static_cast<double>(kJ2000JulianDay)) /
+              static_cast<double>(kDaysPerCentury);
 
     // Fundamental arguments
     auto args = fundarg(tx);
