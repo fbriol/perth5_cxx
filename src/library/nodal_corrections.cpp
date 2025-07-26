@@ -34,7 +34,7 @@ auto compute_nodal_corrections(double omega, double p,
                 0.0219 * std::cos((radians(2 * p - omega)));
         break;
       case kMf:
-      case kMSq:
+      case kMSqm:
         //   case kMSp:
       case kMq:
         term1 = -0.04324 * sin2p - 0.41465 * sinn - 0.03873 * sin2n;
@@ -44,7 +44,7 @@ auto compute_nodal_corrections(double omega, double p,
         term1 = 0.137 * sinn;
         term2 = 1.0;
         break;
-      case kMt:
+      case kMtm:
         term1 = -0.018 * sin2p - 0.4145 * sinn - 0.040 * sin2n;
         term2 = 1.0 + 0.018 * cos2p + 0.4145 * cosn + 0.040 * cos2n;
         break;
@@ -59,7 +59,7 @@ auto compute_nodal_corrections(double omega, double p,
       case k2Q1:
       case kQ1:
       case kRho1:
-      case kSig1:
+      case kSigma1:
         term1 = 0.1886 * sinn;
         term2 = 1.0 + 0.1886 * cosn;
         break;
@@ -67,7 +67,7 @@ auto compute_nodal_corrections(double omega, double p,
         term1 = 0.219 * sinn;
         term2 = 1.0 - 0.219 * cosn;
         break;
-      case kBet1:
+      case kBeta1:
         term1 = 0.226 * sinn;
         term2 = 1.0 + 0.226 * cosn;
         break;
@@ -90,7 +90,7 @@ auto compute_nodal_corrections(double omega, double p,
         term2 = 1.0 + 0.1158 * cosn - 0.0028 * cos2n;
         break;
       case kJ1:
-      case kThe1:
+      case kTheta1:
         term1 = -0.227 * sinn;
         term2 = 1.0 + 0.169 * cosn;
         break;
@@ -104,9 +104,11 @@ auto compute_nodal_corrections(double omega, double p,
       case kMu2:
       case kN2:
       case kNu2:
-      case kLam2:
+      case kLambda2:
       case kMS4:
       case kEps2:
+      case kSN4:
+      case k2SM6:
         term1 = -0.03731 * sinn + 0.00052 * sin2n;
         term2 = 1.0 - 0.03731 * cosn + 0.00052 * cos2n;
         break;
@@ -117,6 +119,7 @@ auto compute_nodal_corrections(double omega, double p,
                 0.110 * std::cos((radians(2 * p - omega))) - 0.037 * cosn;
         break;
       case kK2:
+      case kSK4:
         term1 = -0.3108 * sinn - 0.0324 * sin2n;
         term2 = 1.0 + 0.2853 * cosn + 0.0324 * cos2n;
         break;
@@ -136,6 +139,16 @@ auto compute_nodal_corrections(double omega, double p,
         term1 = 0.00225 * sinn;
         term2 = 1.0 + 0.00225 * cosn;
         break;
+      case kM3:
+        // Linear 3rd-degree terms
+        term1 = -0.05644 * sinn;
+        term2 = 1.0 - 0.05644 * cosn;
+        break;
+      case kM13:
+        // Linear 3rd-degree terms
+        term1 = -0.01815 * sinn;
+        term2 = 1.0 - 0.27837 * cosn;
+        break;
       default:
         // For all other constituents, use default values.
         term1 = 0.;
@@ -147,6 +160,7 @@ auto compute_nodal_corrections(double omega, double p,
     correction.f = std::sqrt(term1 * term1 + term2 * term2);
     correction.u = degrees(std::atan2(term1, term2));
     NodalCorrections nodal_offset;
+    std::vector<NodalCorrections> nodal_corrections;
     if (term1 == 0.0) {
       // Following tides are all compound & use recursion
       switch (constituent) {
@@ -156,9 +170,78 @@ auto compute_nodal_corrections(double omega, double p,
           correction.u = -nodal_offset.u;
           break;
         case kM4:
+        case kMN4:
+        case kN4:
+        case k2MS2:
+        case kMSN6:
+        case k2MS6:
           nodal_offset = std::move(compute_nodal_correction(omega, p, kM2));
-          correction.f = nodal_offset.f * nodal_offset.f;
+          correction.f = pow<2>(nodal_offset.f);
           correction.u = 2.0 * nodal_offset.u;
+          break;
+        case kMSN2:
+          nodal_offset = std::move(compute_nodal_correction(omega, p, kM2));
+          correction.f = pow<2>(nodal_offset.f);
+          correction.u = 0;
+        case k2MN2:
+          nodal_offset = std::move(compute_nodal_correction(omega, p, kM2));
+          correction.f = pow<3>(nodal_offset.f);
+          correction.u = nodal_offset.u;
+          break;
+        case k2SM2:
+          nodal_offset = std::move(compute_nodal_correction(omega, p, kM2));
+          correction.f = nodal_offset.f;
+          correction.u = -nodal_offset.u;
+          break;
+        case kM6:
+        case k2MN6:
+          nodal_offset = std::move(compute_nodal_correction(omega, p, kM2));
+          correction.f = pow<3>(nodal_offset.f);
+          correction.u = 3.0 * nodal_offset.u;
+          break;
+        case kM8:
+          nodal_offset = std::move(compute_nodal_correction(omega, p, kM2));
+          correction.f = pow<4>(nodal_offset.f);
+          correction.u = 4.0 * nodal_offset.u;
+          break;
+        case kMK4:
+        case kMKS2:
+          nodal_corrections =
+              std::move(compute_nodal_corrections(omega, p, {kM2, kK2}));
+          correction.f = nodal_corrections[0].f * nodal_corrections[1].f;
+          correction.u = nodal_corrections[0].u + nodal_corrections[1].u;
+          break;
+        case kMSK6:
+          nodal_corrections =
+              std::move(compute_nodal_corrections(omega, p, {kM2, kK2}));
+          correction.f = nodal_corrections[0].f * nodal_corrections[1].f;
+          correction.u = nodal_corrections[0].u - nodal_corrections[1].u;
+          break;
+        case k2MK6:
+          nodal_corrections =
+              std::move(compute_nodal_corrections(omega, p, {kM2, kK2}));
+          correction.f =
+              pow<2>(nodal_corrections[0].f) * nodal_corrections[1].f;
+          correction.u = 2.0 * nodal_corrections[0].u + nodal_corrections[1].u;
+          break;
+        case kMO3:
+          nodal_corrections =
+              std::move(compute_nodal_corrections(omega, p, {kM2, kO1}));
+          correction.f = nodal_corrections[0].f * nodal_corrections[1].f;
+          correction.u = nodal_corrections[0].u + nodal_corrections[1].u;
+          break;
+        case kMK3:
+          nodal_corrections =
+              std::move(compute_nodal_corrections(omega, p, {kM2, kK1}));
+          correction.f = nodal_corrections[0].f * nodal_corrections[1].f;
+          correction.u = nodal_corrections[0].u + nodal_corrections[1].u;
+          break;
+        case k2MK3:
+          nodal_corrections =
+              std::move(compute_nodal_corrections(omega, p, {kM2, kK1}));
+          correction.f =
+              pow<2>(nodal_corrections[0].f) * nodal_corrections[1].f;
+          correction.u = 2.0 * nodal_corrections[0].u - nodal_corrections[1].u;
           break;
         default:
           break;  // No further corrections needed
@@ -206,7 +289,7 @@ auto compute_nodal_corrections(double perihelion, double omega, double perigee,
         term2 = 1.0 + 0.0875 * std::cos(2.0 * h) + 0.0432 * std::cos(2.0 * p) +
                 0.4145 * std::cos(o) + 0.0387 * std::cos(2.0 * o);
         break;
-      case kMt:
+      case kMtm:
         term1 = 0.0721 * std::sin(-2.0 * h) +
                 0.1897 * std::sin(-2.0 * h + 2.0 * p) +
                 0.0784 * std::sin(-2.0 * h + 2.0 * p + o) +
@@ -230,7 +313,7 @@ auto compute_nodal_corrections(double perihelion, double omega, double perigee,
                 0.2274 * std::cos(2.0 * h - 2.0 * p - o) +
                 1.2086 * std::cos(2.0 * h - 2.0 * p);
         break;
-      case kSig1:
+      case kSigma1:
         term1 = 0.1561 * std::sin(-2.0 * h + 2.0 * p - o) -
                 0.1882 * std::sin(o) + 0.7979 * std::sin(-2.0 * h + 2.0 * p) +
                 0.0815 * std::sin(h - pp);

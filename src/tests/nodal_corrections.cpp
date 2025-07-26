@@ -13,10 +13,11 @@ TEST(NodalCorrectionsTest, ComputeNodalCorrections) {
 
   // Create vector with all constituents
   std::vector<Constituent> constituents{
-      k2Q1,  kSig1, kQ1,  kRho1, kO1,   kTau1, kBet1, kM1,  kChi1, kPi1,
-      kP1,   kS1,   kK1,  kPsi1, kPhi1, kThe1, kJ1,   kSO1, kOO1,  kUps1,
-      kEps2, k2N2,  kMu2, kN2,   kNu2,  kGam2, kAlp2, kM2,  kBet2, kDel2,
-      kLam2, kL2,   kT2,  kS2,   kR2,   kK2,   kEta2, kM4,  kMS4,
+      k2Q1,  kSigma1, kQ1,   kRho1, kO1,   kTau1, kBeta1,   kM1,
+      kChi1, kPi1,    kP1,   kS1,   kK1,   kPsi1, kPhi1,    kTheta1,
+      kJ1,   kSO1,    kOO1,  kUps1, kEps2, k2N2,  kMu2,     kN2,
+      kNu2,  kGam2,   kAlp2, kM2,   kBet2, kDel2, kLambda2, kL2,
+      kT2,   kS2,     kR2,   kK2,   kEta2, kM4,   kMS4,
   };
 
   // Compute nodal corrections
@@ -29,7 +30,7 @@ TEST(NodalCorrectionsTest, ComputeNodalCorrections) {
     // Expected values based on values obtained from Richard Ray's code
     switch (constituent) {
       case k2Q1:
-      case kSig1:
+      case kSigma1:
       case kQ1:
       case kRho1:
         EXPECT_NEAR(item.f, 1.0050726, 1e-6);
@@ -47,7 +48,7 @@ TEST(NodalCorrectionsTest, ComputeNodalCorrections) {
         EXPECT_NEAR(item.f, 1.038005, 1e-6);
         EXPECT_NEAR(item.u, 12.1518206, 1e-6);
         break;
-      case kBet1:
+      case kBeta1:
         EXPECT_NEAR(item.f, 1.0102674, 1e-6);
         EXPECT_NEAR(item.u, 12.896785, 1e-6);
         break;
@@ -67,7 +68,7 @@ TEST(NodalCorrectionsTest, ComputeNodalCorrections) {
         EXPECT_NEAR(item.f, 1.0070494, 1e-6);
         EXPECT_NEAR(item.u, -8.8805836, 1e-6);
         break;
-      case kThe1:
+      case kTheta1:
       case kJ1:
         EXPECT_NEAR(item.f, 1.0142314, 1e-6);
         EXPECT_NEAR(item.u, -12.9033333, 1e-6);
@@ -83,7 +84,7 @@ TEST(NodalCorrectionsTest, ComputeNodalCorrections) {
       case kN2:
       case kNu2:
       case kM2:
-      case kLam2:
+      case kLambda2:
       case kMS4:
         EXPECT_NEAR(item.f, 1.00269, 1e-6);
         EXPECT_NEAR(item.u, -2.131614, 1e-6);
@@ -131,8 +132,8 @@ TEST(NodalCorrectionsTest, ComputeGroupNodalCorrections) {
   double hsolar = 280.08979471465113;
 
   // Create vector with all constituents
-  std::vector<Constituent> constituents{kNode, kSa, kSsa, kSta, kMSm, kMm,
-                                        kMSf,  kMf, kMSt, kMt,  kMSq, kMq};
+  std::vector<Constituent> constituents{kNode, kSa, kSsa, kSta, kMSm,  kMm,
+                                        kMSf,  kMf, kMSt, kMtm, kMSqm, kMq};
 
   // Compute nodal corrections
   auto results = compute_nodal_corrections(perihelion, omega, perigee, hsolar,
@@ -171,11 +172,11 @@ TEST(NodalCorrectionsTest, ComputeGroupNodalCorrections) {
         EXPECT_NEAR(item.f, 0.6746692, 1e-6);
         EXPECT_NEAR(item.u, -12.5876318, 1e-6);
         break;
-      case kMt:
+      case kMtm:
         EXPECT_NEAR(item.f, 1.1711231, 1e-6);
         EXPECT_NEAR(item.u, -19.3849117, 1e-5);
         break;
-      case kMSq:
+      case kMSqm:
         EXPECT_NEAR(item.f, 0.9785142, 1e-6);
         EXPECT_NEAR(item.u, -22.7824356, 1e-6);
         break;

@@ -40,7 +40,7 @@ def test_model(sad: str):
         perth.Constituent._2N2: complex(-2.23751235, 1.32460070),
         perth.Constituent.MU2: complex(-2.65443683, 2.40790391),
         perth.Constituent.J1: complex(-0.330671191, 0.154265821),
-        perth.Constituent.SIG1: complex(2.93300748e-02, -0.700001657),
+        perth.Constituent.SIGMA1: complex(2.93300748e-02, -0.700001657),
         perth.Constituent.OO1: complex(-0.218446687, -0.177276790),
     }
     for constituent, value in acc.values:

@@ -15,15 +15,15 @@ namespace perth {
 std::unordered_map<Constituent, double>
     Inference::kInferredDiurnalConstituents_{{
         // Diurnal constituents
-        {Constituent::k2Q1, 0.006638},  {Constituent::kSig1, 0.008023},
-        {Constituent::kQ1, 0.050184},   {Constituent::kRho1, 0.009540},
-        {Constituent::kO1, 0.262163},   {Constituent::kTau1, 0.003430},
-        {Constituent::kBet1, 0.001941}, {Constituent::kM1, 0.020604},
-        {Constituent::kChi1, 0.003925}, {Constituent::kPi1, 0.007125},
-        {Constituent::kP1, 0.122008},   {Constituent::kK1, 0.368731},
-        {Constituent::kPsi1, 0.002929}, {Constituent::kPhi1, 0.005247},
-        {Constituent::kThe1, 0.003966}, {Constituent::kJ1, 0.020618},
-        {Constituent::kSO1, 0.003417},  {Constituent::kOO1, 0.011293},
+        {Constituent::k2Q1, 0.006638},    {Constituent::kSigma1, 0.008023},
+        {Constituent::kQ1, 0.050184},     {Constituent::kRho1, 0.009540},
+        {Constituent::kO1, 0.262163},     {Constituent::kTau1, 0.003430},
+        {Constituent::kBeta1, 0.001941},  {Constituent::kM1, 0.020604},
+        {Constituent::kChi1, 0.003925},   {Constituent::kPi1, 0.007125},
+        {Constituent::kP1, 0.122008},     {Constituent::kK1, 0.368731},
+        {Constituent::kPsi1, 0.002929},   {Constituent::kPhi1, 0.005247},
+        {Constituent::kTheta1, 0.003966}, {Constituent::kJ1, 0.020618},
+        {Constituent::kSO1, 0.003417},    {Constituent::kOO1, 0.011293},
         {Constituent::kUps1, 0.002157},
     }};
 
@@ -40,7 +40,7 @@ std::unordered_map<Constituent, double>
         {Constituent::kM2, 0.631931},
         {Constituent::kBet2, 0.001921},
         {Constituent::kDel2, 0.000714},
-        {Constituent::kLam2, 0.004662},
+        {Constituent::kLambda2, 0.004662},
         {Constituent::kL2, 0.017862},
         {Constituent::kT2, 0.017180},
         {Constituent::kS2, 0.294019},
@@ -61,8 +61,8 @@ std::unordered_map<Constituent, double>
         {Constituent::kMSf, 0.005837},
         {Constituent::kMf, 0.066607},
         {Constituent::kMSt, 0.002422},
-        {Constituent::kMt, 0.012753},
-        {Constituent::kMSq, 0.002037},
+        {Constituent::kMtm, 0.012753},
+        {Constituent::kMSqm, 0.002037},
         {Constituent::kMq, 0.001687},
     }};
 

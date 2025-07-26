@@ -160,8 +160,8 @@ class TideTableTest : public ::testing::Test {
 };
 
 std::vector<Constituent> TideTableTest::enabled_ = {
-    kQ1, kO1, kP1,  kS1,  kK1,  kN2, kM2,   kS2,
-    kK2, kM4, kMS4, k2N2, kMu2, kJ1, kSig1, kOO1};
+    kQ1, kO1, kP1,  kS1,  kK1,  kN2, kM2,     kS2,
+    kK2, kM4, kMS4, k2N2, kMu2, kJ1, kSigma1, kOO1};
 
 TEST_F(TideTableTest, TableSize) {
   EXPECT_EQ(table.size(), kNumConstituentItems);

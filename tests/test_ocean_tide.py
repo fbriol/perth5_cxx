@@ -16,7 +16,13 @@ def test_got_ocean_tide(sad: str):
     lat = numpy.array([59.194999694824219])
     time = numpy.array(["1983-01-01T00:00:00"], dtype="datetime64[ns]")
 
-    result = handler.evaluate(lon, lat, time, 0, perth.LINEAR_ADMITTANCE)
+    result = handler.evaluate(
+        lon,
+        lat,
+        time,
+        time_tolerance=0,
+        interpolation_type=perth.LINEAR_ADMITTANCE,
+    )
 
     expected_values = (-0.9295959, 0.00475658, 4)
 
@@ -36,7 +42,13 @@ def test_re14_ocean_tide(sad: str):
     lat = numpy.array([59.194999694824219])
     time = numpy.array(["1983-01-01T00:00:00"], dtype="datetime64[ns]")
 
-    result = handler.evaluate(lon, lat, time, 0, perth.LINEAR_ADMITTANCE)
+    result = handler.evaluate(
+        lon,
+        lat,
+        time,
+        time_tolerance=0,
+        interpolation_type=perth.LINEAR_ADMITTANCE,
+    )
 
     expected_values = (0.0, 0.01058243854266213, 4)
     assert pytest.approx(result[1], abs=1e-6) == expected_values[1]

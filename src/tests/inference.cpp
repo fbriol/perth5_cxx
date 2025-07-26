@@ -260,7 +260,7 @@ TEST(InferenceOceanTide, RealCase) {
   // Create a test tide table with known values
   auto tide_table =
       make_tide_table({kQ1, kO1, kP1, kS1, kK1, kN2, kM2, kS2, kK2, kM4, kMS4,
-                       k2N2, kMu2, kJ1, kSig1, kOO1});
+                       k2N2, kMu2, kJ1, kSigma1, kOO1});
 
   auto inference = Inference(tide_table, InterpolationType::kLinearAdmittance);
 

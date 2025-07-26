@@ -23,7 +23,7 @@ def fetch_got_files(sad: str) -> dict[Constituent, str]:
         Constituent._2N2: os.path.join(sad, "GOT5.5", "2n2.nc"),
         Constituent.MU2: os.path.join(sad, "GOT5.5", "mu2.nc"),
         Constituent.J1: os.path.join(sad, "GOT5.5", "j1.nc"),
-        Constituent.SIG1: os.path.join(sad, "GOT5.5", "sig1.nc"),
+        Constituent.SIGMA1: os.path.join(sad, "GOT5.5", "sig1.nc"),
         Constituent.OO1: os.path.join(sad, "GOT5.5", "oo1.nc"),
     }
 
@@ -37,7 +37,7 @@ def fetch_re14_files(sad: str) -> dict[Constituent, str]:
     return {
         Constituent.MF: os.path.join(sad, "RE14", "mf.nc"),
         Constituent.MM: os.path.join(sad, "RE14", "mm.nc"),
-        Constituent.MT: os.path.join(sad, "RE14", "mt.nc"),
+        Constituent.MTM: os.path.join(sad, "RE14", "mt.nc"),
         Constituent.NODE: os.path.join(sad, "RE14", "node.nc"),
         Constituent.SA: os.path.join(sad, "RE14", "sa.nc"),
         Constituent.SSA: os.path.join(sad, "RE14", "ssa.nc"),
