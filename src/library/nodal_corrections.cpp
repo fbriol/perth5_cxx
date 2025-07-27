@@ -159,10 +159,12 @@ auto compute_nodal_corrections(double omega, double p,
     // Calculate f and u
     correction.f = std::sqrt(term1 * term1 + term2 * term2);
     correction.u = degrees(std::atan2(term1, term2));
-    NodalCorrections nodal_offset;
-    std::vector<NodalCorrections> nodal_corrections;
+
+    // Following tides are all compound & use recursion
     if (term1 == 0.0) {
-      // Following tides are all compound & use recursion
+      NodalCorrections nodal_offset;
+      std::vector<NodalCorrections> nodal_corrections;
+
       switch (constituent) {
         case kSO1:
           nodal_offset = std::move(compute_nodal_correction(omega, p, kO1));
@@ -183,6 +185,7 @@ auto compute_nodal_corrections(double omega, double p,
           nodal_offset = std::move(compute_nodal_correction(omega, p, kM2));
           correction.f = pow<2>(nodal_offset.f);
           correction.u = 0;
+          break;
         case k2MN2:
           nodal_offset = std::move(compute_nodal_correction(omega, p, kM2));
           correction.f = pow<3>(nodal_offset.f);
@@ -352,7 +355,7 @@ auto compute_nodal_corrections(double perihelion, double omega, double perigee,
                 0.1558 * std::sin(o) - 0.0030 * std::sin(2.0 * o) +
                 0.0049 * std::sin(h - pp) + 0.0128 * std::sin(2.0 * h);
         term2 = 1.0 - 0.0184 * std::cos(-3.0 * h + pp) +
-                0.0036 * std::cos(2.0 * h + o) + 0.3166 * std::cos(2.0 * h) -
+                0.0036 * std::cos(2.0 * h + o) - 0.3166 * std::cos(2.0 * h) +
                 0.0026 * std::cos(h + pp) + 0.0075 * std::cos(h - pp) +
                 0.1164 * std::cos(o) - 0.0030 * std::cos(2.0 * o) +
                 0.0049 * std::cos(h - pp) + 0.0128 * std::cos(2.0 * h);
@@ -428,11 +431,11 @@ auto compute_nodal_corrections(double perihelion, double omega, double perigee,
         break;
       case kL2:
         term1 = 0.2609 * std::sin(-2.0 * h + 2.0 * p) - 0.0370 * std::sin(-o) -
-                0.2503 * std::sin(2.0 * p) - 0.1103 * std::sin(2.0 * p + o) +
+                0.2503 * std::sin(2.0 * p) - 0.1103 * std::sin(2.0 * p + o) -
                 0.0491 * std::sin(2.0 * h) - 0.0230 * std::sin(2.0 * h + o);
         term2 = 1.0 + 0.2609 * std::cos(-2.0 * h + 2.0 * p) -
                 0.0370 * std::cos(o) - 0.2503 * std::cos(2.0 * p) -
-                0.1103 * std::cos(2.0 * p + o) + 0.0491 * std::cos(2.0 * h) -
+                0.1103 * std::cos(2.0 * p + o) - 0.0491 * std::cos(2.0 * h) -
                 0.0230 * std::cos(2.0 * h + o);
         break;
       case kS2:
