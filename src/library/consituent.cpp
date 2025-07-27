@@ -1,6 +1,11 @@
+#include <algorithm>
+#include <iomanip>
+#include <iostream>
 #include <unordered_map>
+#include <vector>
 
 #include "perth/constituent.hpp"
+#include "perth/tidal_frequency.hpp"
 
 namespace perth {
 
@@ -22,14 +27,14 @@ static const std::array<std::pair<Constituent, Wave>,
         {Constituent::k2Q1, {{1, -3, 0, 2, 0, 0, 3}, kShortPeriod}},
         {Constituent::k2SM2, {{2, 4, -4, 0, 0, 0, 0}, kShortPeriod}},
         {Constituent::k2SM6, {{6, 4, -4, 0, 0, 0, 0}, kShortPeriod}},
-        {Constituent::kAlp2, {{2, 0, -1, 0, 0, 1, 2}, kShortPeriod}},
-        {Constituent::kBet2, {{2, 0, 1, 0, 0, -1, 0}, kShortPeriod}},
+        {Constituent::kAlpa2, {{2, 0, -1, 0, 0, 1, 2}, kShortPeriod}},
+        {Constituent::kBeta2, {{2, 0, 1, 0, 0, -1, 0}, kShortPeriod}},
         {Constituent::kBeta1, {{1, 0, -2, 1, 0, 0, 1}, kShortPeriod}},
         {Constituent::kChi1, {{1, 0, 2, -1, 0, 0, 1}, kShortPeriod}},
-        {Constituent::kDel2, {{2, 0, 2, 0, 0, 0, 0}, kShortPeriod}},
+        {Constituent::kDelta2, {{2, 0, 2, 0, 0, 0, 0}, kShortPeriod}},
         {Constituent::kEps2, {{2, -3, 2, 1, 0, 0, 0}, kShortPeriod}},
         {Constituent::kEta2, {{2, 3, 0, -1, 0, 0, 0}, kShortPeriod}},
-        {Constituent::kGam2, {{2, 0, -2, 2, 0, 0, 2}, kShortPeriod}},
+        {Constituent::kGamma2, {{2, 0, -2, 2, 0, 0, 2}, kShortPeriod}},
         {Constituent::kJ1, {{1, 2, 0, -1, 0, 0, 1}, kShortPeriod}},
         {Constituent::kK1, {{1, 1, 0, 0, 0, 0, 1}, kShortPeriod}},
         {Constituent::kK2, {{2, 2, 0, 0, 0, 0, 0}, kShortPeriod}},
@@ -86,7 +91,7 @@ static const std::array<std::pair<Constituent, Wave>,
         {Constituent::kMSt, {{0, 3, -2, 1, 0, 0, 0}, kLongPeriod}},
         {Constituent::kMtm, {{0, 3, 0, -1, 0, 0, 0}, kLongPeriod}},
         {Constituent::kNode, {{0, 0, 0, 0, 1, 0, 2}, kLongPeriod}},
-        {Constituent::kSa, {{0, 0, 1, 0, 0, -1, 0}, kLongPeriod}},
+        {Constituent::kSa, {{0, 0, 1, 0, 0, 0, 0}, kLongPeriod}},
         {Constituent::kSa1, {{0, 0, 1, 0, 0, -1, 0}, kLongPeriod}},
         {Constituent::kSsa, {{0, 0, 2, 0, 0, 0, 0}, kLongPeriod}},
         {Constituent::kSta, {{0, 0, 3, 0, 0, 0, 0}, kLongPeriod}},
@@ -100,11 +105,174 @@ constexpr auto constituent_to_index(Constituent constituent) -> std::size_t {
   return result;
 }
 
-auto make_tide_table(const std::vector<Constituent> &constituents)
-    -> TideTable {
-  TideTable::Item items;
-  TideTable::Key keys;
-  for (auto &&[key, item] : kConstituents) {
+auto constituent_to_name(Constituent constituent) -> std::string {
+  switch (constituent) {
+    case Constituent::k2MK3:
+      return "2MK3";
+    case Constituent::k2MK6:
+      return "2MK6";
+    case Constituent::k2MN2:
+      return "2MN2";
+    case Constituent::k2MN6:
+      return "2MN6";
+    case Constituent::k2MS2:
+      return "2MS2";
+    case Constituent::k2MS6:
+      return "2MS6";
+    case Constituent::k2N2:
+      return "2N2";
+    case Constituent::k2Q1:
+      return "2Q1";
+    case Constituent::k2SM2:
+      return "2SM2";
+    case Constituent::k2SM6:
+      return "2SM6";
+    case Constituent::kAlpa2:
+      return "Alpha2";
+    case Constituent::kBeta2:
+      return "Beta2";
+    case Constituent::kBeta1:
+      return "Beta1";
+    case Constituent::kChi1:
+      return "Chi1";
+    case Constituent::kDelta2:
+      return "Delta2";
+    case Constituent::kEps2:
+      return "Eps2";
+    case Constituent::kEta2:
+      return "Eta2";
+    case Constituent::kGamma2:
+      return "Gamma2";
+    case Constituent::kJ1:
+      return "J1";
+    case Constituent::kK1:
+      return "K1";
+    case Constituent::kK2:
+      return "K2";
+    case Constituent::kL2:
+      return "L2";
+    case Constituent::kLambda2:
+      return "Lambda2";
+    case Constituent::kM1:
+      return "M1";
+    case Constituent::kM13:
+      return "M13";
+    case Constituent::kM2:
+      return "M2";
+    case Constituent::kM3:
+      return "M3";
+    case Constituent::kM4:
+      return "M4";
+    case Constituent::kM6:
+      return "M6";
+    case Constituent::kM8:
+      return "M8";
+    case Constituent::kMf:
+      return "Mf";
+    case Constituent::kMK3:
+      return "MK3";
+    case Constituent::kMK4:
+      return "MK4";
+    case Constituent::kMKS2:
+      return "MKS2";
+    case Constituent::kMm:
+      return "Mm";
+    case Constituent::kMN4:
+      return "MN4";
+    case Constituent::kMO3:
+      return "MO3";
+    case Constituent::kMq:
+      return "Mq";
+    case Constituent::kMS4:
+      return "MS4";
+    case Constituent::kMSf:
+      return "MSf";
+    case Constituent::kMSK6:
+      return "MSK6";
+    case Constituent::kMSm:
+      return "MSm";
+    case Constituent::kMSN2:
+      return "MSN2";
+    case Constituent::kMSN6:
+      return "MSN6";
+    case Constituent::kMSqm:
+      return "MSqm";
+    case Constituent::kMSt:
+      return "MSt";
+    case Constituent::kMtm:
+      return "Mtm";
+    case Constituent::kMu2:
+      return "Mu2";
+    case Constituent::kN2:
+      return "N2";
+    case Constituent::kN4:
+      return "N4";
+    case Constituent::kNode:
+      return "Node";
+    case Constituent::kNu2:
+      return "Nu2";
+    case Constituent::kO1:
+      return "O1";
+    case Constituent::kOO1:
+      return "OO1";
+    case Constituent::kP1:
+      return "P1";
+    case Constituent::kPhi1:
+      return "Phi1";
+    case Constituent::kPi1:
+      return "Pi1";
+    case Constituent::kPsi1:
+      return "Psi1";
+    case Constituent::kQ1:
+      return "Q1";
+    case Constituent::kR2:
+      return "R2";
+    case Constituent::kR4:
+      return "R4";
+    case Constituent::kRho1:
+      return "Rho1";
+    case Constituent::kS1:
+      return "S1";
+    case Constituent::kS2:
+      return "S2";
+    case Constituent::kS4:
+      return "S4";
+    case Constituent::kS6:
+      return "S6";
+    case Constituent::kSa:
+      return "Sa";
+    case Constituent::kSa1:
+      return "Sa1";
+    case Constituent::kSigma1:
+      return "Sigma1";
+    case Constituent::kSK4:
+      return "SK4";
+    case Constituent::kSN4:
+      return "SN4";
+    case Constituent::kSO1:
+      return "SO1";
+    case Constituent::kSsa:
+      return "Ssa";
+    case Constituent::kSta:
+      return "Sta";
+    case Constituent::kT2:
+      return "T2";
+    case Constituent::kTau1:
+      return "Tau1";
+    case Constituent::kTheta1:
+      return "Theta1";
+    case Constituent::kUps1:
+      return "Ups1";
+    default:
+      return "Unknown";
+  }
+}
+
+auto assemble_constituent_table(const std::vector<Constituent>& constituents)
+    -> ConstituentTable {
+  ConstituentTable::Item items;
+  ConstituentTable::Key keys;
+  for (auto&& [key, item] : kConstituents) {
     auto index = constituent_to_index(key);
     auto inferred = std::find(constituents.begin(), constituents.end(), key);
     items[index] = {item.doodson_number,
@@ -114,7 +282,7 @@ auto make_tide_table(const std::vector<Constituent> &constituents)
                     inferred == constituents.end()};
     keys[index] = key;
   }
-  return TideTable(std::move(keys), std::move(items));
+  return ConstituentTable(std::move(keys), std::move(items));
 }
 
 }  // namespace perth

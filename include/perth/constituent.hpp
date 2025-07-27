@@ -28,14 +28,14 @@ enum Constituent : uint8_t {
   k2Q1,
   k2SM2,
   k2SM6,
-  kAlp2,
-  kBet2,
+  kAlpa2,
+  kBeta2,
   kBeta1,
   kChi1,
-  kDel2,
+  kDelta2,
   kEps2,
   kEta2,
-  kGam2,
+  kGamma2,
   kJ1,
   kK1,
   kK2,
@@ -114,15 +114,15 @@ constexpr std::size_t kNumConstituentItems =
     static_cast<std::size_t>(kNumConstituents);
 
 template <typename T>
-class ConstituentArray {
+class ConstituentSet {
  public:
   using value_type = T;
   using Key = std::array<Constituent, kNumConstituentItems>;
   using Item = std::array<T, kNumConstituentItems>;
 
-  constexpr ConstituentArray() noexcept = default;
+  constexpr ConstituentSet() noexcept = default;
 
-  constexpr ConstituentArray(Key &&keys, Item &&items) noexcept
+  constexpr ConstituentSet(Key &&keys, Item &&items) noexcept
       : keys_(std::move(keys)),
         items_(std::move(items)),
         keys_vector_(keys_.begin(), keys_.end()) {}
@@ -150,6 +150,16 @@ class ConstituentArray {
     return keys_vector_;
   }
 
+  constexpr auto begin() const noexcept ->
+      typename std::vector<Constituent>::const_iterator {
+    return keys_vector_.begin();
+  }
+
+  constexpr auto end() const noexcept ->
+      typename std::vector<Constituent>::const_iterator {
+    return keys_vector_.end();
+  }
+
   constexpr auto at(const size_t index) const
       -> const std::pair<Constituent, T> {
     if (index >= static_cast<size_t>(kNumConstituentItems)) {
@@ -164,9 +174,11 @@ class ConstituentArray {
   std::vector<Constituent> keys_vector_;
 };
 
-using TideTable = ConstituentArray<TideComponent>;
+using ConstituentTable = ConstituentSet<TideComponent>;
 
-auto make_tide_table(const std::vector<Constituent> &constituents = {})
-    -> TideTable;
+auto assemble_constituent_table(
+    const std::vector<Constituent> &constituents = {}) -> ConstituentTable;
+
+auto constituent_to_name(Constituent constituent) -> std::string;
 
 }  // namespace perth

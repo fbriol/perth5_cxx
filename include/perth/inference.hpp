@@ -16,11 +16,12 @@ enum class InterpolationType {
 
 class Inference {
  public:
-  Inference(const TideTable& components,
+  Inference(const ConstituentTable& components,
             const InterpolationType interpolation_type =
                 InterpolationType::kLinearAdmittance);
 
-  auto operator()(TideTable& hc, const double lat = 0) const -> void;
+  auto operator()(ConstituentTable& constituent_table,
+                  const double lat = 0) const -> void;
 
  private:
   /// @brief Type for interpolation functions.

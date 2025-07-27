@@ -24,7 +24,7 @@ auto bind_tidal_model(nanobind::module_& m, const char* name) -> void {
       .def(
           "interpolate",
           [](const perth::TidalModel<T>& self, const double lon,
-             const double lat, perth::TideTable& table,
+             const double lat, perth::ConstituentTable& table,
              perth::Accelerator& acc) {
             if (self.size() != acc.size()) {
               throw std::invalid_argument(

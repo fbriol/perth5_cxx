@@ -39,6 +39,6 @@ def fetch_re14_files(sad: str) -> dict[Constituent, str]:
         Constituent.MM: os.path.join(sad, "RE14", "mm.nc"),
         Constituent.MTM: os.path.join(sad, "RE14", "mt.nc"),
         Constituent.NODE: os.path.join(sad, "RE14", "node.nc"),
-        Constituent.SA: os.path.join(sad, "RE14", "sa.nc"),
+        Constituent.SA1: os.path.join(sad, "RE14", "sa1.nc"),
         Constituent.SSA: os.path.join(sad, "RE14", "ssa.nc"),
     }

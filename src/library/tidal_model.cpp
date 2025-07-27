@@ -5,7 +5,7 @@
 namespace perth {
 
 auto Accelerator::update_args(const double time, const double group_modulations,
-                              TideTable& table) -> void {
+                              ConstituentTable& table) -> void {
   if (std::abs(time - time_) < time_tolerance_) {
     return;
   }

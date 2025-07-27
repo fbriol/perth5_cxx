@@ -87,7 +87,7 @@ class Accelerator {
   }
 
   auto update_args(const double time, const double group_modulations,
-                   TideTable& table) -> void;
+                   ConstituentTable& constituent_table) -> void;
 
  private:
   /// @brief Time in seconds for which astronomical angles are considered
@@ -165,11 +165,12 @@ class TidalModel : public std::enable_shared_from_this<TidalModel<T>> {
                             wave.data(), wave.size()));
   }
 
-  inline auto interpolate(const double lon, const double lat, TideTable& table,
+  inline auto interpolate(const double lon, const double lat,
+                          ConstituentTable& constituent_table,
                           Accelerator* acc) const -> Quality {
     Quality quality;
     for (const auto& item : this->interpolate(lon, lat, quality, acc)) {
-      table[item.first].tide = std::move(item.second);
+      constituent_table[item.first].tide = std::move(item.second);
     }
     return quality;
   }

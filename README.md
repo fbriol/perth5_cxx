@@ -99,7 +99,11 @@ print(f"Quality: {quality[0]}")  # 4 = interpolated, lower values = extrapolated
 
 ### Supported Constituents
 
-The library supports 77 tidal constituents as defined in [`include/perth/constituent.hpp`](include/perth/constituent.hpp). These include:
+The library supports 77 tidal constituents as defined in [`include/perth/constituent.hpp`](include/perth/constituent.hpp).
+
+> Note that some tidal constituents from the original Fortran code were intentionally not ported to maintain consistency with the same set of tidal waves used in pyfes (https://github.com/CNES/aviso-fes). The supported constituents include:
+
+For a complete reference table with speeds and XDO codes for all constituents, see [CONSTITUENTS.md](CONSTITUENTS.md).
 
 **Long Period:**
 - Node, Sa, Ssa, Sta, MSm, Mm, MSf, Mf, MSt, Mtm, MSqm, Mq
@@ -108,7 +112,7 @@ The library supports 77 tidal constituents as defined in [`include/perth/constit
 - 2Q1, Sigma1, Q1, Rho1, O1, Tau1, Beta1, M1, Chi1, Pi1, P1, S1, K1, Psi1, Phi1, Theta1, J1, SO1, OO1, Ups1, Sa1
 
 **Semidiurnal (twice daily):**
-- Eps2, 2N2, Mu2, N2, Nu2, Gam2, Alp2, M2, Bet2, Del2, Lambda2, L2, T2, S2, R2, K2, Eta2, 2MN2, 2MS2, 2SM2, MSN2
+- Eps2, 2N2, Mu2, N2, Nu2, Gamma2, Alpa2, M2, Beta2, Delta2, Lambda2, L2, T2, S2, R2, K2, Eta2, 2MN2, 2MS2, 2SM2, MSN2
 
 **Terdiurnal:**
 - M3, MO3, MK3, 2MK3
@@ -150,7 +154,7 @@ model = load_model(file_dict, dtype=np.float32)
 
 ### Methods
 
-#### `evaluate(lon, lat, time, time_tolerance=0.0, interpolation_type=None)`
+#### `evaluate(lon, lat, time, time_tolerance=0.0, interpolation_type=None, num_threads=0)`
 
 Compute tide predictions at specified locations and times.
 
@@ -160,6 +164,7 @@ Compute tide predictions at specified locations and times.
 - `time`: Time array (datetime64)
 - `time_tolerance`: Time tolerance for caching (seconds)
 - `interpolation_type`: Inference method (`LINEAR_ADMITTANCE` or `FOURIER_ADMITTANCE`)
+- `num_threads`: Number of threads for parallel processing (0 for auto-detect)
 
 **Returns:**
 - `tide`: Short-period tidal heights

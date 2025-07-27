@@ -35,11 +35,11 @@ std::unordered_map<Constituent, double>
         {Constituent::kMu2, 0.019316},
         {Constituent::kN2, 0.121006},
         {Constituent::kNu2, 0.022983},
-        {Constituent::kGam2, 0.001902},
-        {Constituent::kAlp2, 0.002178},
+        {Constituent::kGamma2, 0.001902},
+        {Constituent::kAlpa2, 0.002178},
         {Constituent::kM2, 0.631931},
-        {Constituent::kBet2, 0.001921},
-        {Constituent::kDel2, 0.000714},
+        {Constituent::kBeta2, 0.001921},
+        {Constituent::kDelta2, 0.000714},
         {Constituent::kLambda2, 0.004662},
         {Constituent::kL2, 0.017862},
         {Constituent::kT2, 0.017180},
@@ -53,7 +53,7 @@ std::unordered_map<Constituent, double>
     Inference::kInferredLongPeriodConstituents_{{
         // Long-period constituents
         {Constituent::kNode, 0.027929},
-        {Constituent::kSa, 0.004922},  // grav arg.; not conventional Sa
+        {Constituent::kSa1, 0.004922},  // grav arg.; not conventional Sa
         {Constituent::kSsa, 0.030988},
         {Constituent::kSta, 0.001809},
         {Constituent::kMSm, 0.006728},
@@ -134,7 +134,7 @@ auto populate_and_sort_inferred(
         mutable_inferred,
     std::vector<Constituent>& keys,
     const std::unordered_map<Constituent, double>& inferred,
-    const TideTable& components) -> void {
+    const ConstituentTable& components) -> void {
   for (auto [ident, ampl] : inferred) {
     auto doodson_number =
         components[ident].doodson_number.head(6).cast<double>();
@@ -152,7 +152,7 @@ auto populate_and_sort_inferred(
             });
 }
 
-Inference::Inference(const TideTable& components,
+Inference::Inference(const ConstituentTable& components,
                      const InterpolationType interpolation_type) {
   populate_and_sort_inferred(inferred_diurnal_, diurnal_keys_,
                              kInferredDiurnalConstituents_, components);
@@ -206,20 +206,22 @@ Inference::Inference(const TideTable& components,
   }
 }
 
-auto Inference::operator()(TideTable& hc, const double lat) const -> void {
-  auto y1 = hc[Constituent::kQ1].tide / amp1_;
-  auto y2 = hc[Constituent::kO1].tide / amp2_;
-  auto y3 = hc[Constituent::kK1].tide / amp3_;
-  auto y4 = hc[Constituent::kN2].tide / amp4_;
-  auto y5 = hc[Constituent::kM2].tide / amp5_;
-  auto y6 = hc[Constituent::kS2].tide / amp6_;
-  auto y8 = hc[Constituent::kMm].tide / amp8_;
-  auto y9 = hc[Constituent::kMf].tide / amp9_;
+auto Inference::operator()(ConstituentTable& constituent_table,
+                           const double lat) const -> void {
+  auto y1 = constituent_table[Constituent::kQ1].tide / amp1_;
+  auto y2 = constituent_table[Constituent::kO1].tide / amp2_;
+  auto y3 = constituent_table[Constituent::kK1].tide / amp3_;
+  auto y4 = constituent_table[Constituent::kN2].tide / amp4_;
+  auto y5 = constituent_table[Constituent::kM2].tide / amp5_;
+  auto y6 = constituent_table[Constituent::kS2].tide / amp6_;
+  auto y8 = constituent_table[Constituent::kMm].tide / amp8_;
+  auto y9 = constituent_table[Constituent::kMf].tide / amp9_;
 
-  auto y7 = evaluate_node_tide(hc[Constituent::kNode], lat) / amp7_;
+  auto y7 =
+      evaluate_node_tide(constituent_table[Constituent::kNode], lat) / amp7_;
 
   for (const auto& constituent : diurnal_keys_) {
-    auto& updated_item = hc[constituent];
+    auto& updated_item = constituent_table[constituent];
     if (!updated_item.is_inferred || updated_item.type != kShortPeriod) {
       continue;  // Skip if the constituent is not computed by inference
     }
@@ -233,7 +235,7 @@ auto Inference::operator()(TideTable& hc, const double lat) const -> void {
   }
 
   for (const auto& constituent : semidiurnal_keys_) {
-    auto& updated_item = hc[constituent];
+    auto& updated_item = constituent_table[constituent];
     if (!updated_item.is_inferred || updated_item.type != kShortPeriod) {
       continue;  // Skip if the constituent is not computed by inference
     }
@@ -242,7 +244,7 @@ auto Inference::operator()(TideTable& hc, const double lat) const -> void {
     updated_item.tide = y * inferred_item.second;
   }
   for (const auto& constituent : long_period_keys_) {
-    auto& updated_item = hc[constituent];
+    auto& updated_item = constituent_table[constituent];
     if (!updated_item.is_inferred || updated_item.type != kLongPeriod) {
       continue;  // Skip if the constituent is not computed by inference
     }

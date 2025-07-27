@@ -14,7 +14,7 @@ class InferenceTest : public ::testing::Test {
  protected:
   void SetUp() override {
     // Create a test tide table with known values
-    tide_table_ = make_tide_table();
+    tide_table_ = assemble_constituent_table();
 
     // Set up some test values for the primary constituents
     // These are the constituents used for interpolation
@@ -29,7 +29,7 @@ class InferenceTest : public ::testing::Test {
     tide_table_[Constituent::kMm].tide = Complex(0.08, 0.03);    // Long period
   }
 
-  TideTable tide_table_;
+  ConstituentTable tide_table_;
 };
 
 // Test constructor with different parameter combinations
@@ -50,7 +50,7 @@ TEST_F(InferenceTest, OperatorMinor) {
   Inference inference(tide_table_, InterpolationType::kLinearAdmittance);
 
   // Store original values for comparison
-  TideTable original_table = tide_table_;
+  ConstituentTable original_table = tide_table_;
 
   // Apply inference
   inference(tide_table_);
@@ -89,7 +89,7 @@ TEST_F(InferenceTest, FourierInterpolation) {
   Inference inference(tide_table_, InterpolationType::kFourierAdmittance);
 
   // Store original values
-  TideTable original_table = tide_table_;
+  ConstituentTable original_table = tide_table_;
 
   // Apply inference
   inference(tide_table_);
@@ -130,7 +130,7 @@ TEST_F(InferenceTest, ReasonableMagnitudes) {
 // Test with zero input values
 TEST_F(InferenceTest, ZeroInputValues) {
   // Set all values to zero
-  TideTable zero_table = make_tide_table();
+  ConstituentTable zero_table = assemble_constituent_table();
 
   Inference inference(tide_table_, InterpolationType::kLinearAdmittance);
 
@@ -147,8 +147,8 @@ TEST_F(InferenceTest, ZeroInputValues) {
 
 // Test consistency between linear and Fourier interpolation
 TEST_F(InferenceTest, InterpolationConsistency) {
-  TideTable linear_table = tide_table_;
-  TideTable fourier_table = tide_table_;
+  ConstituentTable linear_table = tide_table_;
+  ConstituentTable fourier_table = tide_table_;
 
   Inference linear_inference(tide_table_, InterpolationType::kLinearAdmittance);
 
@@ -205,7 +205,7 @@ TEST_F(InferenceTest, DifferentInputScales) {
   Inference inference(tide_table_, InterpolationType::kLinearAdmittance);
 
   // Test with very small values
-  TideTable small_table = make_tide_table();
+  ConstituentTable small_table = assemble_constituent_table();
   small_table[Constituent::kO1].tide = Complex(1e-6, 1e-7);
   small_table[Constituent::kK1].tide = Complex(2e-6, 1e-7);
   small_table[Constituent::kQ1].tide = Complex(0.5e-6, 1e-7);
@@ -216,7 +216,7 @@ TEST_F(InferenceTest, DifferentInputScales) {
   EXPECT_NO_THROW(inference(small_table));
 
   // Test with large values
-  TideTable large_table = make_tide_table();
+  ConstituentTable large_table = assemble_constituent_table();
   large_table[Constituent::kO1].tide = Complex(1000.0, 500.0);
   large_table[Constituent::kK1].tide = Complex(2000.0, 800.0);
   large_table[Constituent::kQ1].tide = Complex(500.0, 200.0);
@@ -231,7 +231,7 @@ TEST_F(InferenceTest, DifferentInputScales) {
 TEST_F(InferenceTest, FrequencyRangeConsistency) {
   Inference linear_inference(tide_table_, InterpolationType::kLinearAdmittance);
 
-  TideTable test_table = tide_table_;
+  ConstituentTable test_table = tide_table_;
   linear_inference(test_table);
 
   // Check that diurnal constituents have appropriate relative magnitudes
@@ -259,8 +259,8 @@ TEST_F(InferenceTest, FrequencyRangeConsistency) {
 TEST(InferenceOceanTide, RealCase) {
   // Create a test tide table with known values
   auto tide_table =
-      make_tide_table({kQ1, kO1, kP1, kS1, kK1, kN2, kM2, kS2, kK2, kM4, kMS4,
-                       k2N2, kMu2, kJ1, kSigma1, kOO1});
+      assemble_constituent_table({kQ1, kO1, kP1, kS1, kK1, kN2, kM2, kS2, kK2,
+                                  kM4, kMS4, k2N2, kMu2, kJ1, kSigma1, kOO1});
 
   auto inference = Inference(tide_table, InterpolationType::kLinearAdmittance);
 

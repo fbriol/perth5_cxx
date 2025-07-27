@@ -53,14 +53,14 @@ class Perth {
   bool group_modulations_{false};  ///< Whether to apply group modulations.
 
   auto evaluate_tide(const double lon, const double lat, const double time,
-                     TideTable& tide_table, Inference* inference,
+                     ConstituentTable& tide_table, Inference* inference,
                      Accelerator* acc) const
       -> std::tuple<double, double, Quality>;
 };
 
 template <typename T>
 auto Perth<T>::evaluate_tide(const double lon, const double lat,
-                             const double time, TideTable& tide_table,
+                             const double time, ConstituentTable& tide_table,
                              Inference* inference, Accelerator* acc) const
     -> std::tuple<double, double, Quality> {
   // Interpolation, at the requested position, of the waves provided by the
@@ -129,7 +129,8 @@ auto Perth<T>::evaluate(
 
   auto worker = [&](const size_t start, const size_t end) -> void {
     // Create the tide table and accelerator.
-    TideTable tide_table = make_tide_table(tidal_model_->identifiers());
+    ConstituentTable tide_table =
+        assemble_constituent_table(tidal_model_->identifiers());
     Accelerator acc(time_tolerance, tide_table.size());
 
     auto inference = std::unique_ptr<Inference>(

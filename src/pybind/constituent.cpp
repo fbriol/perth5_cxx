@@ -1,9 +1,13 @@
 #include "constituent.hpp"
 
+#include <nanobind/eigen/dense.h>
+#include <nanobind/make_iterator.h>
 #include <nanobind/stl/optional.h>
+#include <nanobind/stl/string.h>
 #include <nanobind/stl/vector.h>
 
 #include "perth/constituent.hpp"
+#include "perth/tidal_frequency.hpp"
 
 namespace nb = nanobind;
 
@@ -27,14 +31,14 @@ auto instantiate_constituent(nanobind::module_ &m) -> void {
       .value("_2Q1", perth::Constituent::k2Q1, "2Q1")
       .value("_2SM2", perth::Constituent::k2SM2, "2SM2")
       .value("_2SM6", perth::Constituent::k2SM6, "2SM6")
-      .value("ALP2", perth::Constituent::kAlp2, "Alp2")
-      .value("BET2", perth::Constituent::kBet2, "Bet2")
+      .value("ALPHA2", perth::Constituent::kAlpa2, "Alpha2")
+      .value("BETA2", perth::Constituent::kBeta2, "Beta2")
       .value("BETA1", perth::Constituent::kBeta1, "Beta1")
       .value("CHI1", perth::Constituent::kChi1, "Chi1")
-      .value("DEL2", perth::Constituent::kDel2, "Del2")
+      .value("DELTA2", perth::Constituent::kDelta2, "Delta2")
       .value("EPS2", perth::Constituent::kEps2, "Eps2")
       .value("ETA2", perth::Constituent::kEta2, "Eta2")
-      .value("GAM2", perth::Constituent::kGam2, "Gam2")
+      .value("GAMMA2", perth::Constituent::kGamma2, "Gamma2")
       .value("J1", perth::Constituent::kJ1, "J1")
       .value("K1", perth::Constituent::kK1, "K1")
       .value("K2", perth::Constituent::kK2, "K2")
@@ -96,17 +100,82 @@ auto instantiate_constituent(nanobind::module_ &m) -> void {
       .value("THETA1", perth::Constituent::kTheta1, "Theta1")
       .value("UPS1", perth::Constituent::kUps1, "Ups1");
 
-  nb::class_<perth::TideTable>(m, "TideTable", "Table of tidal constituents.");
+  nb::class_<perth::TideComponent>(m, "TideComponent",
+                                   "Represents a tidal component.")
+      .def_prop_ro(
+          "doodson_number",
+          [](const perth::TideComponent &self) -> Eigen::Vector<int8_t, 7> {
+            return self.doodson_number;
+          },
+          "Doodson number of the constituent.")
+      .def_prop_ro(
+          "tide",
+          [](const perth::TideComponent &self) -> std::complex<double> {
+            return self.tide;
+          },
+          "Tide of the constituent.")
+      .def_prop_ro(
+          "tidal_argument",
+          [](const perth::TideComponent &self) -> double {
+            return self.tidal_argument;
+          },
+          "Doodson argument of the constituent.")
+      .def_prop_ro(
+          "type",
+          [](const perth::TideComponent &self) -> perth::ConstituentType {
+            return self.type;
+          },
+          "Type of tidal wave.")
+      .def_prop_ro(
+          "is_inferred",
+          [](const perth::TideComponent &self) -> bool {
+            return self.is_inferred;
+          },
+          "Whether the tide was inferred from the constituents.");
+
+  nb::class_<perth::ConstituentTable>(m, "ConstituentTable",
+                                      "Table of tidal constituents.")
+      .def(
+          "__len__",
+          [](const perth::ConstituentTable &self) -> size_t {
+            return self.size();
+          },
+          "Returns the number of constituents in the table.")
+      .def(
+          "__getitem__",
+          [](const perth::ConstituentTable &self,
+             perth::Constituent constituent) -> const perth::TideComponent & {
+            return self[constituent];
+          },
+          "Get a constituent by its enum value.")
+      .def(
+          "__iter__",
+          [](const perth::ConstituentTable &self) {
+            return nb::make_iterator(nb::type<perth::ConstituentTable>(),
+                                     "key_iterator", self.begin(), self.end());
+          },
+          nb::keep_alive<0, 1>());
+
+  m.def("tidal_frequency", &perth::tidal_frequency,
+        "Calculate the tidal frequency in degrees per hour from a Doodson "
+        "number.",
+        nb::arg("doodson_number"),
+        "Returns the tidal frequency in degrees per hour.");
 
   m.def(
-      "make_tide_table",
+      "assemble_constituent_table",
       [](const std::optional<std::vector<perth::Constituent>> &constituents) {
         if (constituents.has_value()) {
-          return perth::make_tide_table(constituents.value());
+          return perth::assemble_constituent_table(constituents.value());
         } else {
-          return perth::make_tide_table();
+          return perth::assemble_constituent_table();
         }
       },
       "Create a TideTable with the given constituents.",
       nb::arg("constituents") = std::nullopt, nb::rv_policy::automatic);
+
+  m.def("constituent_to_name", &perth::constituent_to_name,
+        "Convert a Constituent enum value to its string name.",
+        nb::arg("constituent"),
+        "Returns the name of the constituent as a string.");
 }

@@ -17,11 +17,13 @@ def test_model(sad: str):
     assert isinstance(model, perth._core.TidalModelFloat32)
     acc = model.accelerator(0)
     assert isinstance(acc, perth._core.Accelerator)
-    tide_table = perth._core.make_tide_table(model.identifiers())
+    constituent_table = perth._core.assemble_constituent_table(
+        model.identifiers()
+    )
     quality = model.interpolate(
         -7.6880002021789551,
         59.194999694824219,
-        tide_table,
+        constituent_table,
         acc,
     )
     assert quality is perth.Quality.INTERPOLATED

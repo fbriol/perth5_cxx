@@ -10,7 +10,7 @@ namespace perth {
 template <typename T>
 class ConstituentArrayTest : public ::testing::Test {
  protected:
-  using TestArray = ConstituentArray<T>;
+  using TestArray = ConstituentSet<T>;
 };
 
 // Test types
@@ -151,7 +151,7 @@ class TideTableTest : public ::testing::Test {
   static std::vector<Constituent> enabled_;
 
  protected:
-  TideTable table = make_tide_table(TideTableTest::enabled_);
+  ConstituentTable table = assemble_constituent_table(TideTableTest::enabled_);
 
   auto is_enabled(Constituent constituent) const -> bool {
     return std::find(enabled_.begin(), enabled_.end(), constituent) !=
