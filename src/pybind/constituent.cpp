@@ -21,84 +21,162 @@ auto instantiate_constituent(nanobind::module_ &m) -> void {
 
   nb::enum_<perth::Constituent>(m, "Constituent",
                                 "Enum representing tidal constituents.")
-      .value("_2MK3", perth::Constituent::k2MK3, "2MK3")
-      .value("_2MK6", perth::Constituent::k2MK6, "2MK6")
-      .value("_2MN2", perth::Constituent::k2MN2, "2MN2")
-      .value("_2MN6", perth::Constituent::k2MN6, "2MN6")
-      .value("_2MS2", perth::Constituent::k2MS2, "2MS2")
-      .value("_2MS6", perth::Constituent::k2MS6, "2MS6")
-      .value("_2N2", perth::Constituent::k2N2, "2N2")
-      .value("_2Q1", perth::Constituent::k2Q1, "2Q1")
-      .value("_2SM2", perth::Constituent::k2SM2, "2SM2")
-      .value("_2SM6", perth::Constituent::k2SM6, "2SM6")
-      .value("ALPHA2", perth::Constituent::kAlpa2, "Alpha2")
-      .value("BETA2", perth::Constituent::kBeta2, "Beta2")
-      .value("BETA1", perth::Constituent::kBeta1, "Beta1")
-      .value("CHI1", perth::Constituent::kChi1, "Chi1")
-      .value("DELTA2", perth::Constituent::kDelta2, "Delta2")
-      .value("EPS2", perth::Constituent::kEps2, "Eps2")
-      .value("ETA2", perth::Constituent::kEta2, "Eta2")
-      .value("GAMMA2", perth::Constituent::kGamma2, "Gamma2")
-      .value("J1", perth::Constituent::kJ1, "J1")
-      .value("K1", perth::Constituent::kK1, "K1")
-      .value("K2", perth::Constituent::kK2, "K2")
-      .value("L2", perth::Constituent::kL2, "L2")
-      .value("LAMBDA2", perth::Constituent::kLambda2, "Lambda2")
-      .value("M1", perth::Constituent::kM1, "M1")
-      .value("M13", perth::Constituent::kM13, "M13")
-      .value("M2", perth::Constituent::kM2, "M2")
-      .value("M3", perth::Constituent::kM3, "M3")
-      .value("M4", perth::Constituent::kM4, "M4")
-      .value("M6", perth::Constituent::kM6, "M6")
-      .value("M8", perth::Constituent::kM8, "M8")
-      .value("MF", perth::Constituent::kMf, "Mf")
-      .value("MK3", perth::Constituent::kMK3, "MK3")
-      .value("MK4", perth::Constituent::kMK4, "MK4")
-      .value("MKS2", perth::Constituent::kMKS2, "MKS2")
-      .value("MM", perth::Constituent::kMm, "Mm")
-      .value("MN4", perth::Constituent::kMN4, "MN4")
-      .value("MO3", perth::Constituent::kMO3, "MO3")
-      .value("MQ", perth::Constituent::kMq, "Mq")
-      .value("MS4", perth::Constituent::kMS4, "MS4")
-      .value("MSF", perth::Constituent::kMSf, "MSf")
-      .value("MSK6", perth::Constituent::kMSK6, "MSK6")
-      .value("MSM", perth::Constituent::kMSm, "MSm")
-      .value("MSN2", perth::Constituent::kMSN2, "MSN2")
-      .value("MSN6", perth::Constituent::kMSN6, "MSN6")
-      .value("MSQM", perth::Constituent::kMSqm, "MSqm")
-      .value("MST", perth::Constituent::kMSt, "MSt")
-      .value("MTM", perth::Constituent::kMtm, "Mtm")
-      .value("MU2", perth::Constituent::kMu2, "Mu2")
-      .value("N2", perth::Constituent::kN2, "N2")
-      .value("N4", perth::Constituent::kN4, "N4")
-      .value("NODE", perth::Constituent::kNode, "Node")
-      .value("NU2", perth::Constituent::kNu2, "Nu2")
-      .value("O1", perth::Constituent::kO1, "O1")
-      .value("OO1", perth::Constituent::kOO1, "OO1")
-      .value("P1", perth::Constituent::kP1, "P1")
-      .value("PHI1", perth::Constituent::kPhi1, "Phi1")
-      .value("PI1", perth::Constituent::kPi1, "Pi1")
-      .value("PSI1", perth::Constituent::kPsi1, "Psi1")
-      .value("Q1", perth::Constituent::kQ1, "Q1")
-      .value("R2", perth::Constituent::kR2, "R2")
-      .value("R4", perth::Constituent::kR4, "R4")
-      .value("RHO1", perth::Constituent::kRho1, "Rho1")
-      .value("S1", perth::Constituent::kS1, "S1")
-      .value("S2", perth::Constituent::kS2, "S2")
-      .value("S4", perth::Constituent::kS4, "S4")
-      .value("S6", perth::Constituent::kS6, "S6")
-      .value("SA", perth::Constituent::kSa, "Sa")
-      .value("SA1", perth::Constituent::kSa1, "Sa1")
-      .value("SIGMA1", perth::Constituent::kSigma1, "Sigma1")
-      .value("SK4", perth::Constituent::kSK4, "SK4")
-      .value("SN4", perth::Constituent::kSN4, "SN4")
-      .value("SO1", perth::Constituent::kSO1, "SO1")
-      .value("SSA", perth::Constituent::kSsa, "Ssa")
-      .value("STA", perth::Constituent::kSta, "Sta")
-      .value("T2", perth::Constituent::kT2, "T2")
-      .value("TAU1", perth::Constituent::kTau1, "Tau1")
-      .value("THETA1", perth::Constituent::kTheta1, "Theta1")
-      .value("UPS1", perth::Constituent::kUps1, "Ups1");
+      .value("_2MK3", perth::Constituent::k2MK3,
+             perth::constituent_to_name(perth::Constituent::k2MK3).c_str())
+      .value("_2MK6", perth::Constituent::k2MK6,
+             perth::constituent_to_name(perth::Constituent::k2MK6).c_str())
+      .value("_2MN2", perth::Constituent::k2MN2,
+             perth::constituent_to_name(perth::Constituent::k2MN2).c_str())
+      .value("_2MN6", perth::Constituent::k2MN6,
+             perth::constituent_to_name(perth::Constituent::k2MN6).c_str())
+      .value("_2MS2", perth::Constituent::k2MS2,
+             perth::constituent_to_name(perth::Constituent::k2MS2).c_str())
+      .value("_2MS6", perth::Constituent::k2MS6,
+             perth::constituent_to_name(perth::Constituent::k2MS6).c_str())
+      .value("_2N2", perth::Constituent::k2N2,
+             perth::constituent_to_name(perth::Constituent::k2N2).c_str())
+      .value("_2Q1", perth::Constituent::k2Q1,
+             perth::constituent_to_name(perth::Constituent::k2Q1).c_str())
+      .value("_2SM2", perth::Constituent::k2SM2,
+             perth::constituent_to_name(perth::Constituent::k2SM2).c_str())
+      .value("_2SM6", perth::Constituent::k2SM6,
+             perth::constituent_to_name(perth::Constituent::k2SM6).c_str())
+      .value("ALPHA2", perth::Constituent::kAlpa2,
+             perth::constituent_to_name(perth::Constituent::kAlpa2).c_str())
+      .value("BETA2", perth::Constituent::kBeta2,
+             perth::constituent_to_name(perth::Constituent::kBeta2).c_str())
+      .value("BETA1", perth::Constituent::kBeta1,
+             perth::constituent_to_name(perth::Constituent::kBeta1).c_str())
+      .value("CHI1", perth::Constituent::kChi1,
+             perth::constituent_to_name(perth::Constituent::kChi1).c_str())
+      .value("DELTA2", perth::Constituent::kDelta2,
+             perth::constituent_to_name(perth::Constituent::kDelta2).c_str())
+      .value("EPS2", perth::Constituent::kEps2,
+             perth::constituent_to_name(perth::Constituent::kEps2).c_str())
+      .value("ETA2", perth::Constituent::kEta2,
+             perth::constituent_to_name(perth::Constituent::kEta2).c_str())
+      .value("GAMMA2", perth::Constituent::kGamma2,
+             perth::constituent_to_name(perth::Constituent::kGamma2).c_str())
+      .value("J1", perth::Constituent::kJ1,
+             perth::constituent_to_name(perth::Constituent::kJ1).c_str())
+      .value("K1", perth::Constituent::kK1,
+             perth::constituent_to_name(perth::Constituent::kK1).c_str())
+      .value("K2", perth::Constituent::kK2,
+             perth::constituent_to_name(perth::Constituent::kK2).c_str())
+      .value("L2", perth::Constituent::kL2,
+             perth::constituent_to_name(perth::Constituent::kL2).c_str())
+      .value("LAMBDA2", perth::Constituent::kLambda2,
+             perth::constituent_to_name(perth::Constituent::kLambda2).c_str())
+      .value("M1", perth::Constituent::kM1,
+             perth::constituent_to_name(perth::Constituent::kM1).c_str())
+      .value("M13", perth::Constituent::kM13,
+             perth::constituent_to_name(perth::Constituent::kM13).c_str())
+      .value("M2", perth::Constituent::kM2,
+             perth::constituent_to_name(perth::Constituent::kM2).c_str())
+      .value("M3", perth::Constituent::kM3,
+             perth::constituent_to_name(perth::Constituent::kM3).c_str())
+      .value("M4", perth::Constituent::kM4,
+             perth::constituent_to_name(perth::Constituent::kM4).c_str())
+      .value("M6", perth::Constituent::kM6,
+             perth::constituent_to_name(perth::Constituent::kM6).c_str())
+      .value("M8", perth::Constituent::kM8,
+             perth::constituent_to_name(perth::Constituent::kM8).c_str())
+      .value("MF", perth::Constituent::kMf,
+             perth::constituent_to_name(perth::Constituent::kMf).c_str())
+      .value("MK3", perth::Constituent::kMK3,
+             perth::constituent_to_name(perth::Constituent::kMK3).c_str())
+      .value("MK4", perth::Constituent::kMK4,
+             perth::constituent_to_name(perth::Constituent::kMK4).c_str())
+      .value("MKS2", perth::Constituent::kMKS2,
+             perth::constituent_to_name(perth::Constituent::kMKS2).c_str())
+      .value("MM", perth::Constituent::kMm,
+             perth::constituent_to_name(perth::Constituent::kMm).c_str())
+      .value("MN4", perth::Constituent::kMN4,
+             perth::constituent_to_name(perth::Constituent::kMN4).c_str())
+      .value("MO3", perth::Constituent::kMO3,
+             perth::constituent_to_name(perth::Constituent::kMO3).c_str())
+      .value("MQM", perth::Constituent::kMqm,
+             perth::constituent_to_name(perth::Constituent::kMqm).c_str())
+      .value("MS4", perth::Constituent::kMS4,
+             perth::constituent_to_name(perth::Constituent::kMS4).c_str())
+      .value("MSF", perth::Constituent::kMSf,
+             perth::constituent_to_name(perth::Constituent::kMSf).c_str())
+      .value("MSK6", perth::Constituent::kMSK6,
+             perth::constituent_to_name(perth::Constituent::kMSK6).c_str())
+      .value("MSM", perth::Constituent::kMSm,
+             perth::constituent_to_name(perth::Constituent::kMSm).c_str())
+      .value("MSN2", perth::Constituent::kMSN2,
+             perth::constituent_to_name(perth::Constituent::kMSN2).c_str())
+      .value("MSN6", perth::Constituent::kMSN6,
+             perth::constituent_to_name(perth::Constituent::kMSN6).c_str())
+      .value("MSQM", perth::Constituent::kMSqm,
+             perth::constituent_to_name(perth::Constituent::kMSqm).c_str())
+      .value("MSTM", perth::Constituent::kMStm,
+             perth::constituent_to_name(perth::Constituent::kMStm).c_str())
+      .value("MTM", perth::Constituent::kMtm,
+             perth::constituent_to_name(perth::Constituent::kMtm).c_str())
+      .value("MU2", perth::Constituent::kMu2,
+             perth::constituent_to_name(perth::Constituent::kMu2).c_str())
+      .value("N2", perth::Constituent::kN2,
+             perth::constituent_to_name(perth::Constituent::kN2).c_str())
+      .value("N4", perth::Constituent::kN4,
+             perth::constituent_to_name(perth::Constituent::kN4).c_str())
+      .value("NODE", perth::Constituent::kNode,
+             perth::constituent_to_name(perth::Constituent::kNode).c_str())
+      .value("NU2", perth::Constituent::kNu2,
+             perth::constituent_to_name(perth::Constituent::kNu2).c_str())
+      .value("O1", perth::Constituent::kO1,
+             perth::constituent_to_name(perth::Constituent::kO1).c_str())
+      .value("OO1", perth::Constituent::kOO1,
+             perth::constituent_to_name(perth::Constituent::kOO1).c_str())
+      .value("P1", perth::Constituent::kP1,
+             perth::constituent_to_name(perth::Constituent::kP1).c_str())
+      .value("PHI1", perth::Constituent::kPhi1,
+             perth::constituent_to_name(perth::Constituent::kPhi1).c_str())
+      .value("PI1", perth::Constituent::kPi1,
+             perth::constituent_to_name(perth::Constituent::kPi1).c_str())
+      .value("PSI1", perth::Constituent::kPsi1,
+             perth::constituent_to_name(perth::Constituent::kPsi1).c_str())
+      .value("Q1", perth::Constituent::kQ1,
+             perth::constituent_to_name(perth::Constituent::kQ1).c_str())
+      .value("R2", perth::Constituent::kR2,
+             perth::constituent_to_name(perth::Constituent::kR2).c_str())
+      .value("R4", perth::Constituent::kR4,
+             perth::constituent_to_name(perth::Constituent::kR4).c_str())
+      .value("RHO1", perth::Constituent::kRho1,
+             perth::constituent_to_name(perth::Constituent::kRho1).c_str())
+      .value("S1", perth::Constituent::kS1,
+             perth::constituent_to_name(perth::Constituent::kS1).c_str())
+      .value("S2", perth::Constituent::kS2,
+             perth::constituent_to_name(perth::Constituent::kS2).c_str())
+      .value("S4", perth::Constituent::kS4,
+             perth::constituent_to_name(perth::Constituent::kS4).c_str())
+      .value("S6", perth::Constituent::kS6,
+             perth::constituent_to_name(perth::Constituent::kS6).c_str())
+      .value("SA", perth::Constituent::kSa,
+             perth::constituent_to_name(perth::Constituent::kSa).c_str())
+      .value("SA1", perth::Constituent::kSa1,
+             perth::constituent_to_name(perth::Constituent::kSa1).c_str())
+      .value("SIGMA1", perth::Constituent::kSigma1,
+             perth::constituent_to_name(perth::Constituent::kSigma1).c_str())
+      .value("SK4", perth::Constituent::kSK4,
+             perth::constituent_to_name(perth::Constituent::kSK4).c_str())
+      .value("SN4", perth::Constituent::kSN4,
+             perth::constituent_to_name(perth::Constituent::kSN4).c_str())
+      .value("SO1", perth::Constituent::kSO1,
+             perth::constituent_to_name(perth::Constituent::kSO1).c_str())
+      .value("SSA", perth::Constituent::kSsa,
+             perth::constituent_to_name(perth::Constituent::kSsa).c_str())
+      .value("STA", perth::Constituent::kSta,
+             perth::constituent_to_name(perth::Constituent::kSta).c_str())
+      .value("T2", perth::Constituent::kT2,
+             perth::constituent_to_name(perth::Constituent::kT2).c_str())
+      .value("TAU1", perth::Constituent::kTau1,
+             perth::constituent_to_name(perth::Constituent::kTau1).c_str())
+      .value("THETA1", perth::Constituent::kTheta1,
+             perth::constituent_to_name(perth::Constituent::kTheta1).c_str())
+      .value("UPS1", perth::Constituent::kUps1,
+             perth::constituent_to_name(perth::Constituent::kUps1).c_str());
 
   nb::class_<perth::TideComponent>(m, "TideComponent",
                                    "Represents a tidal component.")

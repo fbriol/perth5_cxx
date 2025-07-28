@@ -132,8 +132,8 @@ TEST(NodalCorrectionsTest, ComputeGroupNodalCorrections) {
   double hsolar = 280.08979471465113;
 
   // Create vector with all constituents
-  std::vector<Constituent> constituents{kNode, kSa, kSsa, kSta, kMSm,  kMm,
-                                        kMSf,  kMf, kMSt, kMtm, kMSqm, kMq};
+  std::vector<Constituent> constituents{kNode, kSa, kSsa,  kSta, kMSm,  kMm,
+                                        kMSf,  kMf, kMStm, kMtm, kMSqm, kMqm};
 
   // Compute nodal corrections
   auto results = compute_nodal_corrections(perihelion, omega, perigee, hsolar,
@@ -168,7 +168,7 @@ TEST(NodalCorrectionsTest, ComputeGroupNodalCorrections) {
         EXPECT_NEAR(item.f, 0.8911305, 1e-6);
         EXPECT_NEAR(item.u, -23.029193, 1e-5);
         break;
-      case kMSt:
+      case kMStm:
         EXPECT_NEAR(item.f, 0.6746692, 1e-6);
         EXPECT_NEAR(item.u, -12.5876318, 1e-6);
         break;
@@ -180,7 +180,7 @@ TEST(NodalCorrectionsTest, ComputeGroupNodalCorrections) {
         EXPECT_NEAR(item.f, 0.9785142, 1e-6);
         EXPECT_NEAR(item.u, -22.7824356, 1e-6);
         break;
-      case kMq:
+      case kMqm:
         EXPECT_NEAR(item.f, 2.2833835, 1e-6);
         EXPECT_NEAR(item.u, -10.3654824, 1e-5);
         break;

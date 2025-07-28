@@ -106,28 +106,25 @@ The library supports 77 tidal constituents as defined in [`include/perth/constit
 For a complete reference table with speeds and XDO codes for all constituents, see [CONSTITUENTS.md](CONSTITUENTS.md).
 
 **Long Period:**
-- Node, Sa, Ssa, Sta, MSm, Mm, MSf, Mf, MSt, Mtm, MSqm, Mq
+- Node, Sa, Ssa, Sta, MSm, Mm, MSf, Mf, MStm, Mtm, MSqm, Mqm
 
 **Diurnal (once daily):**
-- 2Q1, Sigma1, Q1, Rho1, O1, Tau1, Beta1, M1, Chi1, Pi1, P1, S1, K1, Psi1, Phi1, Theta1, J1, SO1, OO1, Ups1, Sa1
+- 2Q1, Sigma1, Q1, Rho1, O1, Tau1, Beta1, M13, M1, Chi1, Pi1, P1, S1, K1, Psi1, Phi1, Theta1, J1, SO1, OO1, Ups1, Sa1
 
 **Semidiurnal (twice daily):**
-- Eps2, 2N2, Mu2, N2, Nu2, Gamma2, Alpa2, M2, Beta2, Delta2, Lambda2, L2, T2, S2, R2, K2, Eta2, 2MN2, 2MS2, 2SM2, MSN2
+- Eps2, 2N2, Mu2, N2, Nu2, Gamma2, Alpa2, M2, Beta2, Delta2, Lambda2, L2, T2, S2, R2, K2, Eta2, 2MN2, 2MS2, 2SM2,  MKS2, MSN2
 
 **Terdiurnal:**
 - M3, MO3, MK3, 2MK3
 
 **Quarter-diurnal and higher:**
-- M4, MS4, MN4, N4, R4, S4, SK4, SN4
+- M4, MK4, MN4, MS4, N4, R4, S4, SK4, SN4
 
 **Sixth-diurnal:**
 - M6, 2MK6, 2MN6, 2MS6, 2SM6, MSN6, MSK6, S6
 
 **Eighth-diurnal:**
 - M8
-
-**Additional compound tides:**
-- MK4, MKS2, M13
 
 All constituents support automatic inference capabilities when missing from the input tide model data.
 

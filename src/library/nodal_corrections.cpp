@@ -36,7 +36,7 @@ auto compute_nodal_corrections(double omega, double p,
       case kMf:
       case kMSqm:
         //   case kMSp:
-      case kMq:
+      case kMqm:
         term1 = -0.04324 * sin2p - 0.41465 * sinn - 0.03873 * sin2n;
         term2 = 1.0 + 0.04324 * cos2p + 0.41465 * cosn + 0.03873 * cos2n;
         break;
@@ -48,7 +48,7 @@ auto compute_nodal_corrections(double omega, double p,
         term1 = -0.018 * sin2p - 0.4145 * sinn - 0.040 * sin2n;
         term2 = 1.0 + 0.018 * cos2p + 0.4145 * cosn + 0.040 * cos2n;
         break;
-      case kMSt:
+      case kMStm:
         term1 = -0.380 * sin2p - 0.413 * sinn - 0.037 * sin2n;
         term2 = 1.0 + 0.380 * cos2p + 0.413 * cosn + 0.037 * cos2n;
         break;
@@ -302,7 +302,7 @@ auto compute_nodal_corrections(double perihelion, double omega, double perigee,
                 0.0784 * std::cos(-2.0 * h + 2.0 * p + o) +
                 0.4146 * std::cos(o);
         break;
-      case kMq:
+      case kMqm:
         term1 = 1.207 * std::sin(-2.0 * h + 2.0 * p) +
                 0.497 * std::sin(-2.0 * h + 2.0 * p + o) + 0.414 * std::sin(o);
         term2 = 1.0 + 1.207 * std::cos(-2.0 * h + 2.0 * p) +

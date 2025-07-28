@@ -11,10 +11,10 @@
 | Mm | 0.5443747  | Z AZY ZZZ |
 | MSf | 1.0158958  | Z BXZ ZZZ |
 | Mf | 1.0980330  | Z BZZ ZZZ |
-| MSt | 1.5695541  | Z CXA ZZZ |
+| MStm | 1.5695541  | Z CXA ZZZ |
 | Mtm | 1.6424077  | Z CZY ZZZ |
 | MSqm | 2.1139288  | Z DXZ ZZZ |
-| Mq | 2.1867824  | Z DZX ZZZ |
+| Mqm | 2.1867824  | Z DZX ZZZ |
 | 2Q1 | 12.8542862  | A WZB ZZY |
 | Sigma1 ($\sigma 1$) | 12.9271398  | A WBZ ZZY |
 | Q1 | 13.3986609  | A XZA ZZY |

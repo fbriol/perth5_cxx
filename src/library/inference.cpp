@@ -60,10 +60,10 @@ std::unordered_map<Constituent, double>
         {Constituent::kMm, 0.035184},
         {Constituent::kMSf, 0.005837},
         {Constituent::kMf, 0.066607},
-        {Constituent::kMSt, 0.002422},
+        {Constituent::kMStm, 0.002422},
         {Constituent::kMtm, 0.012753},
         {Constituent::kMSqm, 0.002037},
-        {Constituent::kMq, 0.001687},
+        {Constituent::kMqm, 0.001687},
     }};
 
 /// @brief Computes linear admittance interpolation, based on 3 fundamental

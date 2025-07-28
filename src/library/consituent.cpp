@@ -84,11 +84,11 @@ static const std::array<std::pair<Constituent, Wave>,
         {Constituent::kUps1, {{1, 4, 0, -1, 0, 0, 1}, kShortPeriod}},
         {Constituent::kMf, {{0, 2, 0, 0, 0, 0, 0}, kLongPeriod}},
         {Constituent::kMm, {{0, 1, 0, -1, 0, 0, 0}, kLongPeriod}},
-        {Constituent::kMq, {{0, 4, 0, -2, 0, 0, 0}, kLongPeriod}},
+        {Constituent::kMqm, {{0, 4, 0, -2, 0, 0, 0}, kLongPeriod}},
         {Constituent::kMSf, {{0, 2, -2, 0, 0, 0, 0}, kLongPeriod}},
         {Constituent::kMSm, {{0, 1, -2, 1, 0, 0, 0}, kLongPeriod}},
         {Constituent::kMSqm, {{0, 4, -2, 0, 0, 0, 0}, kLongPeriod}},
-        {Constituent::kMSt, {{0, 3, -2, 1, 0, 0, 0}, kLongPeriod}},
+        {Constituent::kMStm, {{0, 3, -2, 1, 0, 0, 0}, kLongPeriod}},
         {Constituent::kMtm, {{0, 3, 0, -1, 0, 0, 0}, kLongPeriod}},
         {Constituent::kNode, {{0, 0, 0, 0, 1, 0, 2}, kLongPeriod}},
         {Constituent::kSa, {{0, 0, 1, 0, 0, 0, 0}, kLongPeriod}},
@@ -181,8 +181,8 @@ auto constituent_to_name(Constituent constituent) -> std::string {
       return "MN4";
     case Constituent::kMO3:
       return "MO3";
-    case Constituent::kMq:
-      return "Mq";
+    case Constituent::kMqm:
+      return "Mqm";
     case Constituent::kMS4:
       return "MS4";
     case Constituent::kMSf:
@@ -197,8 +197,8 @@ auto constituent_to_name(Constituent constituent) -> std::string {
       return "MSN6";
     case Constituent::kMSqm:
       return "MSqm";
-    case Constituent::kMSt:
-      return "MSt";
+    case Constituent::kMStm:
+      return "MStm";
     case Constituent::kMtm:
       return "Mtm";
     case Constituent::kMu2:
