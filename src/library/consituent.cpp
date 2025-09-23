@@ -39,6 +39,7 @@ static const std::array<std::pair<Constituent, Wave>,
         {Constituent::kK1, {{1, 1, 0, 0, 0, 0, 1}, kShortPeriod}},
         {Constituent::kK2, {{2, 2, 0, 0, 0, 0, 0}, kShortPeriod}},
         {Constituent::kL2, {{2, 1, 0, -1, 0, 0, 2}, kShortPeriod}},
+        {Constituent::kL2P, {{2, 1, 0, 0, 0, 0, 3}, kShortPeriod}},
         {Constituent::kLambda2, {{2, 1, -2, 1, 0, 0, 2}, kShortPeriod}},
         {Constituent::kM1, {{1, 0, 0, 1, 0, 0, 1}, kShortPeriod}},
         {Constituent::kM13, {{1, 0, 0, 0, 0, 0, 2}, kShortPeriod}},
@@ -58,6 +59,7 @@ static const std::array<std::pair<Constituent, Wave>,
         {Constituent::kMSN6, {{6, 1, -2, 1, 0, 0, 0}, kShortPeriod}},
         {Constituent::kMu2, {{2, -2, 2, 0, 0, 0, 0}, kShortPeriod}},
         {Constituent::kN2, {{2, -1, 0, 1, 0, 0, 0}, kShortPeriod}},
+        {Constituent::kN2P, {{2,-1, 0, 0, 0, 0, 1}, kShortPeriod}},
         {Constituent::kN4, {{4, -2, 0, 2, 0, 0, 0}, kShortPeriod}},
         {Constituent::kNu2, {{2, -1, 2, -1, 0, 0, 0}, kShortPeriod}},
         {Constituent::kO1, {{1, -1, 0, 0, 0, 0, 3}, kShortPeriod}},
@@ -151,6 +153,8 @@ auto constituent_to_name(Constituent constituent) -> std::string {
       return "K2";
     case Constituent::kL2:
       return "L2";
+    case Constituent::kL2P:
+      return "L2P";
     case Constituent::kLambda2:
       return "Lambda2";
     case Constituent::kM1:
@@ -205,6 +209,8 @@ auto constituent_to_name(Constituent constituent) -> std::string {
       return "Mu2";
     case Constituent::kN2:
       return "N2";
+    case Constituent::kN2P:
+      return "N2P";
     case Constituent::kN4:
       return "N4";
     case Constituent::kNode:

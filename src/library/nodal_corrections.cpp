@@ -112,11 +112,19 @@ auto compute_nodal_corrections(double omega, double p,
         term1 = -0.03731 * sinn + 0.00052 * sin2n;
         term2 = 1.0 - 0.03731 * cosn + 0.00052 * cos2n;
         break;
+      case kN2P:
+        term1 = 0.1705 * sinn - 0.0035 * sin2n - 0.0176 * sin2p;
+        term2 = 1.0 + 0.1705 * cosn - 0.0035 * cos2n - 0.0176 * cos2p;
+        break;
       case kL2:
         term1 = -0.250 * sin2p - 0.110 * std::sin((radians(2 * p - omega))) -
                 0.037 * sinn;
         term2 = 1.0 - 0.250 * cos2p -
                 0.110 * std::cos((radians(2 * p - omega))) - 0.037 * cosn;
+        break;
+      case kL2P:
+        term1 = -0.2495 * sinn;
+        term2 = 1.0 + 0.1315 * cosn;
         break;
       case kK2:
       case kSK4:

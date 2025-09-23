@@ -65,6 +65,8 @@ auto instantiate_constituent(nanobind::module_ &m) -> void {
              perth::constituent_to_name(perth::Constituent::kK2).c_str())
       .value("L2", perth::Constituent::kL2,
              perth::constituent_to_name(perth::Constituent::kL2).c_str())
+      .value("L2P", perth::Constituent::kL2P,
+             perth::constituent_to_name(perth::Constituent::kL2P).c_str())
       .value("LAMBDA2", perth::Constituent::kLambda2,
              perth::constituent_to_name(perth::Constituent::kLambda2).c_str())
       .value("M1", perth::Constituent::kM1,
@@ -119,6 +121,8 @@ auto instantiate_constituent(nanobind::module_ &m) -> void {
              perth::constituent_to_name(perth::Constituent::kMu2).c_str())
       .value("N2", perth::Constituent::kN2,
              perth::constituent_to_name(perth::Constituent::kN2).c_str())
+      .value("N2P", perth::Constituent::kN2P,
+             perth::constituent_to_name(perth::Constituent::kN2P).c_str())
       .value("N4", perth::Constituent::kN4,
              perth::constituent_to_name(perth::Constituent::kN4).c_str())
       .value("NODE", perth::Constituent::kNode,

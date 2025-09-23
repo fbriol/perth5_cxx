@@ -40,6 +40,7 @@
 | 2N2 | 27.8953548  | B XZB ZZZ |
 | 2MS2 | 27.9682085  | B XBZ ZZZ |
 | Mu2 ($\mu 2$) | 27.9682085  | B XBZ ZZZ |
+| N2P | 28.4350877  | B YZZ ZZA |
 | N2 | 28.4397295  | B YZA ZZZ |
 | Nu2 ($\nu 2$) | 28.5125832  | B YBY ZZZ |
 | Gamma2 ($\gamma 2$) | 28.9112506  | B ZXB ZZB |
@@ -51,6 +52,7 @@
 | Lambda2 ($\lambda 2$) | 29.4556253  | B AXA ZZB |
 | 2MN2 | 29.5284790  | B AZY ZZZ |
 | L2 | 29.5284790  | B AZY ZZB |
+| L2P | 29.5331208  | B AZZ ZZY |
 | T2 | 29.9589333  | B BWZ ZAZ |
 | S2 | 30.0000000  | B BXZ ZZZ |
 | R2 | 30.0410667  | B BYZ ZYB |
