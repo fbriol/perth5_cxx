@@ -25,7 +25,7 @@ constexpr auto epoch_to_modified_julian_date(const int64_t epoch) -> double {
   // 1 MJD = 86400 seconds, and MJD starts at 1858-11-17
   // 1970-01-01 is 40587 days after 1858-11-17
   auto days = epoch / kMicrosecondsPerSecond / kSecondsPerDay;
-  auto fractional_mcsec = epoch % (kMicrosecondsPerSecond * kSecondsPerDay);
+  auto fractional_mcsec = static_cast<double>(epoch % (kMicrosecondsPerSecond * kSecondsPerDay));
   return days + (fractional_mcsec / (kMicrosecondsPerSecond * kSecondsPerDay)) +
          40587.0;
 }
