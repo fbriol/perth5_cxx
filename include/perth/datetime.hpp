@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cstdint>
+
 namespace perth {
 
 /// @brief The Modified Julian Date epoch in seconds.

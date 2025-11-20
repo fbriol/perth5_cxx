@@ -1,6 +1,8 @@
 #include "perth/tidal_model.hpp"
 
 #include "perth/datetime.hpp"
+#include "perth/delta_t.hpp"
+#include "perth/doodson.hpp"
 
 namespace perth {
 

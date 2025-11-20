@@ -10,10 +10,7 @@
 
 #include "perth/axis.hpp"
 #include "perth/constituent.hpp"
-#include "perth/delta_t.hpp"
-#include "perth/doodson.hpp"
 #include "perth/grid.hpp"
-#include "perth/inference.hpp"
 #include "perth/math.hpp"
 #include "perth/nodal_corrections.hpp"
 

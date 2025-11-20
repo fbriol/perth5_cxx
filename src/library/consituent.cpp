@@ -1,11 +1,7 @@
 #include <algorithm>
-#include <iomanip>
-#include <iostream>
-#include <unordered_map>
 #include <vector>
 
 #include "perth/constituent.hpp"
-#include "perth/tidal_frequency.hpp"
 
 namespace perth {
 

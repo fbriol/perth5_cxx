@@ -1,12 +1,19 @@
 #pragma once
 
+#include <Eigen/Core>
+#include <cmath>
+#include <cstddef>
+#include <cstdint>
+#include <limits>
+#include <memory>
 #include <optional>
+#include <stdexcept>
 #include <tuple>
 
 #include "perth/constituent.hpp"
 #include "perth/datetime.hpp"
-#include "perth/doodson.hpp"
 #include "perth/inference.hpp"
+#include "perth/math.hpp"
 #include "perth/nodal_corrections.hpp"
 #include "perth/parallel_for.hpp"
 #include "perth/tidal_model.hpp"

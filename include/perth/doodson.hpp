@@ -2,9 +2,7 @@
 
 #include <Eigen/Dense>
 
-#include "perth/constituent.hpp"
 #include "perth/eigen.hpp"
-#include "perth/fundarg.hpp"
 #include "perth/math.hpp"
 
 namespace perth {

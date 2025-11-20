@@ -7,7 +7,6 @@
 #include <nanobind/stl/unique_ptr.h>
 #include <nanobind/stl/vector.h>
 
-#include "perth/inference.hpp"
 #include "perth/tidal_model.hpp"
 
 namespace nb = nanobind;

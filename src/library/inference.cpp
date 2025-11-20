@@ -1,10 +1,7 @@
 
 #include "perth/inference.hpp"
 
-#include <array>
-
 #include "perth/constituent.hpp"
-#include "perth/doodson.hpp"
 #include "perth/eigen.hpp"
 #include "perth/love_numbers.hpp"
 #include "perth/math.hpp"

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "perth//math.hpp"
 #include "perth/doodson.hpp"
+#include "perth/eigen.hpp"
 
 namespace perth {
 

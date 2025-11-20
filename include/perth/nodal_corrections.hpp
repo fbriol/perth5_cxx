@@ -1,8 +1,5 @@
 #pragma once
 
-#include <array>
-#include <span>
-#include <string>
 #include <vector>
 
 #include "perth/constituent.hpp"

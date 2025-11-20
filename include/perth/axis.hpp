@@ -1,13 +1,16 @@
 #pragma once
 
 #include <Eigen/Core>
+#include <algorithm>
+#include <cmath>
+#include <cstdint>
 #include <limits>
 #include <memory>
 #include <optional>
 #include <stdexcept>
+#include <string>
 #include <tuple>
 
-#include "perth/eigen.hpp"
 #include "perth/math.hpp"
 
 namespace perth {

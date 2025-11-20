@@ -2,6 +2,7 @@
 #include "perth/doodson.hpp"
 
 #include "perth/datetime.hpp"
+#include "perth/fundarg.hpp"
 
 namespace perth {
 auto calculate_celestial_vector(double time, double delta) noexcept
