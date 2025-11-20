@@ -6,7 +6,12 @@
 #include <nanobind/stl/shared_ptr.h>
 #include <nanobind/stl/unique_ptr.h>
 #include <nanobind/stl/vector.h>
+#include <cstddef>
+#include <stdexcept>
 
+#include "nanobind/nanobind.h"
+#include "perth/axis.hpp"
+#include "perth/constituent.hpp"
 #include "perth/tidal_model.hpp"
 
 namespace nb = nanobind;

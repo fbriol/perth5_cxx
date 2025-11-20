@@ -1,11 +1,14 @@
 #pragma once
 
 #include <complex>
+#include <cstddef>
 #include <cstdint>
 #include <limits>
 #include <memory>
 #include <stdexcept>
+#include <string>
 #include <unordered_map>
+#include <utility>
 #include <vector>
 
 #include "perth/axis.hpp"

@@ -1,7 +1,13 @@
 #include <algorithm>
+#include <array>
+#include <cstddef>
+#include <stdexcept>
+#include <string>
+#include <utility>
 #include <vector>
 
 #include "perth/constituent.hpp"
+#include "perth/eigen.hpp"
 
 namespace perth {
 

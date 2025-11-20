@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cstddef>
+#include <exception>
 #include <thread>
 #include <vector>
 

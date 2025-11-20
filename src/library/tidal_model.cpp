@@ -1,8 +1,12 @@
 #include "perth/tidal_model.hpp"
+#include <cstdlib>
+#include <utility>
 
+#include "perth/constituent.hpp"
 #include "perth/datetime.hpp"
 #include "perth/delta_t.hpp"
 #include "perth/doodson.hpp"
+#include "perth/nodal_corrections.hpp"
 
 namespace perth {
 

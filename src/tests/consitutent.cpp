@@ -1,6 +1,9 @@
 #include <gtest/gtest.h>
 
+#include <algorithm>
 #include <complex>
+#include <cstddef>
+#include <vector>
 
 #include "perth/constituent.hpp"
 

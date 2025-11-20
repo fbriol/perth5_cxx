@@ -1,6 +1,7 @@
 #include "perth/doodson.hpp"
 
 #include <gtest/gtest.h>
+#include "perth/eigen.hpp"
 
 namespace perth {
 

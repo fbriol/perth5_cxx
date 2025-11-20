@@ -1,5 +1,12 @@
 
 #include "perth/inference.hpp"
+#include <algorithm>
+#include <cmath>
+#include <stdexcept>
+#include <tuple>
+#include <unordered_map>
+#include <utility>
+#include <vector>
 
 #include "perth/constituent.hpp"
 #include "perth/eigen.hpp"
